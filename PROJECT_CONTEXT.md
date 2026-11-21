@@ -104,7 +104,7 @@ pfa new db app/
 
 ### Phase A - Foundation and Database
 - [x] **A1**: Recommend and create project folder structure, `.gitignore`, Git repo initialization, `PROJECT_CONTEXT.md`, and `STATUS.md`.
-- [ ] **A2**: Virtual environment, dependencies (`requirements.txt`), minimal APIFlask app-factory, config from `.env`, CORS, and `/api/health` check.
+- [x] **A2**: Virtual environment, dependencies (`requirements.txt`), minimal APIFlask app-factory, config from `.env`, CORS, and `/api/health` check.
 - [ ] **A3**: PostgreSQL setup, database connectivity verification.
 - [ ] **A4**: SQLAlchemy models (one file per table, mixins for timestamps and soft delete, exports).
 - [ ] **A5**: Flask-Migrate setup, initial migration generation and execution, table verification.
