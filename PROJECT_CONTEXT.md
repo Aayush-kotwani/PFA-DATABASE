@@ -40,6 +40,10 @@ A web-based management system for an animal welfare NGO in India that rescues, s
    - Standardized pagination response: `{"items": [...], "page": 1, "per_page": 20, "total": 100}`.
    - Soft deletes (`is_deleted = True`) excluded from standard queries.
    - Comprehensive audit logging on create, update, delete operations.
+4. **Database Environment Separation Decision (Step A3)**:
+   - Primary database provider: **Neon (Serverless PostgreSQL)**.
+   - Dedicated development database: `dog_sterilization_dev` is used for all active development, local tests, migrations, and seeding.
+   - Live/production database: Kept strictly isolated in a separate database instance/branch to prevent mixing test records with real animal NGO data.
 
 ---
 
@@ -105,7 +109,7 @@ pfa new db app/
 ### Phase A - Foundation and Database
 - [x] **A1**: Recommend and create project folder structure, `.gitignore`, Git repo initialization, `PROJECT_CONTEXT.md`, and `STATUS.md`.
 - [x] **A2**: Virtual environment, dependencies (`requirements.txt`), minimal APIFlask app-factory, config from `.env`, CORS, and `/api/health` check.
-- [ ] **A3**: PostgreSQL setup, database connectivity verification.
+- [x] **A3**: PostgreSQL setup (Neon `dog_sterilization_dev`), database connectivity verification (`SELECT 1`).
 - [ ] **A4**: SQLAlchemy models (one file per table, mixins for timestamps and soft delete, exports).
 - [ ] **A5**: Flask-Migrate setup, initial migration generation and execution, table verification.
 - [ ] **A6**: Safe database seeding script (`scripts/seed.py`) with admin, volunteer, and sample areas.

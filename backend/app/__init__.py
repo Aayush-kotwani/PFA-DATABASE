@@ -3,7 +3,7 @@
 from apiflask import APIFlask
 
 from app.config import Config
-from app.extensions import cors
+from app.extensions import cors, db
 from app.routes.health import health_bp
 
 
@@ -26,6 +26,9 @@ def create_app(config_class: type[Config] = Config) -> APIFlask:
             "bearerFormat": "JWT",
         }
     }
+
+    # Initialize SQLAlchemy database extension
+    db.init_app(app)
 
     # Enable CORS for API routes
     cors.init_app(app, resources={r"/api/*": {"origins": app.config["CORS_ORIGINS"]}})

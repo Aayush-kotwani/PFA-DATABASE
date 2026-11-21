@@ -14,13 +14,22 @@ def _parse_origins(raw_origins: str) -> list[str]:
     return [origin.strip() for origin in raw_origins.split(",") if origin.strip()]
 
 
+def _normalize_db_url(raw_url: str) -> str:
+    """Ensure PostgreSQL URLs use the installed psycopg2 driver."""
+    if raw_url.startswith("postgres://"):
+        return raw_url.replace("postgres://", "postgresql+psycopg2://", 1)
+    if raw_url.startswith("postgresql://") and not raw_url.startswith("postgresql+"):
+        return raw_url.replace("postgresql://", "postgresql+psycopg2://", 1)
+    return raw_url
+
+
 class Config:
     """Base configuration for the Dog Sterilization API."""
 
     SECRET_KEY = os.getenv("SECRET_KEY", "dev-only-fallback-key")
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "dev-only-jwt-fallback-key")
 
-    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "")
+    SQLALCHEMY_DATABASE_URI = _normalize_db_url(os.getenv("DATABASE_URL", ""))
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     CORS_ORIGINS = _parse_origins(
