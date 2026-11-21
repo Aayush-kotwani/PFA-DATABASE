@@ -91,6 +91,7 @@ pfa new db app/
     │   ├── routes/                 # API blueprints per resource
     │   ├── schemas/                # Request validation and serialization schemas
     │   ├── services/               # Pure business logic and domain services
+    │   │   └── storage/            # Storage abstraction (LocalStorage, R2Storage)
     │   └── utils/                  # Helpers, custom decorators, error handlers
     ├── migrations/                 # Alembic database migration scripts
     ├── scripts/                    # Maintenance and seeding scripts (e.g., seed.py)
