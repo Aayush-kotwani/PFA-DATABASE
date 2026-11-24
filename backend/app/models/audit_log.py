@@ -17,18 +17,18 @@ class AuditLog(db.Model):
     table_name = db.Column(String(50), nullable=False, index=True)
     record_id = db.Column(Integer, nullable=False, index=True)
 
-    # JSONB on PostgreSQL for efficient querying, standard JSON as fallback
+    # JSONB on PostgreSQL for efficient querying, standard JSON as fallback for SQLite
     changes = db.Column(JSONB().with_variant(JSON(), "sqlite"), nullable=True)
 
     created_at = db.Column(
         DateTime(timezone=True),
         nullable=False,
-        default=func.now(),
+        server_default=func.now(),
         index=True,
     )
 
     # Relationship
-    user = db.relationship("User", backref="audit_logs")
+    user = db.relationship("User", foreign_keys=[user_id], backref="audit_logs")
 
     def __repr__(self) -> str:
         return (

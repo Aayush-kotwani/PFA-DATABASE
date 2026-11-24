@@ -1,23 +1,23 @@
 """Reusable database model mixins for timestamps and soft delete."""
 
 from datetime import datetime, timezone
-from sqlalchemy import Boolean, DateTime, func
+from sqlalchemy import Boolean, DateTime, func, text
 from app.extensions import db
 
 
 class TimestampMixin:
-    """Provides created_at and updated_at tracking for models."""
+    """Provides created_at and updated_at tracking with database server defaults."""
 
     created_at = db.Column(
         DateTime(timezone=True),
         nullable=False,
-        default=func.now(),
+        server_default=func.now(),
         doc="Timestamp when the record was created",
     )
     updated_at = db.Column(
         DateTime(timezone=True),
         nullable=False,
-        default=func.now(),
+        server_default=func.now(),
         onupdate=func.now(),
         doc="Timestamp when the record was last updated",
     )
@@ -30,6 +30,7 @@ class SoftDeleteMixin:
         Boolean,
         nullable=False,
         default=False,
+        server_default=text("false"),
         index=True,
         doc="Flag indicating if record has been soft-deleted",
     )

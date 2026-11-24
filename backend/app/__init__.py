@@ -30,6 +30,9 @@ def create_app(config_class: type[Config] = Config) -> APIFlask:
     # Initialize SQLAlchemy database extension
     db.init_app(app)
 
+    # Register database models with SQLAlchemy metadata
+    from app import models  # noqa: F401
+
     # Enable CORS for API routes
     cors.init_app(app, resources={r"/api/*": {"origins": app.config["CORS_ORIGINS"]}})
 
