@@ -116,7 +116,7 @@ pfa new db app/
 - [x] **A3**: PostgreSQL setup (Neon `pfa-dog-sterilization-db`), database connectivity verification (`SELECT 1`).
 - [x] **A4**: SQLAlchemy models (one file per table, mixins for timestamps and soft delete, analytics readiness columns, exports).
 - [x] **A5**: Flask-Migrate setup, initial migration generation and execution, table verification.
-- [ ] **A6**: Safe database seeding script (`scripts/seed.py`) with admin, volunteer, and sample areas.
+- [x] **A6**: Safe database seeding script (`scripts/seed.py`) with admin, volunteer, and sample areas (Phase A Complete).
 
 ### Phase B - Backend APIs (Tested in Swagger UI)
 - [ ] **B1**: Authentication (`POST /api/auth/login`, `GET /api/auth/me`, password hashing, role decorators).
