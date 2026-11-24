@@ -1,5 +1,12 @@
 """Validation and serialization schemas package."""
 
+from app.schemas.area import (
+    AreaCreateInSchema,
+    AreaListOutSchema,
+    AreaListQuerySchema,
+    AreaOutSchema,
+    AreaUpdateInSchema,
+)
 from app.schemas.auth import LoginInSchema, LoginOutSchema, UserMeOutSchema
 from app.schemas.user import (
     UserCreateInSchema,
@@ -20,4 +27,9 @@ __all__ = [
     "UserUpdateInSchema",
     "UserResetPasswordInSchema",
     "UserMessageOutSchema",
+    "AreaOutSchema",
+    "AreaListQuerySchema",
+    "AreaListOutSchema",
+    "AreaCreateInSchema",
+    "AreaUpdateInSchema",
 ]

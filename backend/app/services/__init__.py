@@ -1,5 +1,12 @@
 """Business logic services package."""
 
+from app.services.area_service import (
+    create_area,
+    deactivate_area,
+    get_area,
+    list_areas,
+    update_area,
+)
 from app.services.audit_service import log_audit
 from app.services.auth_service import authenticate_user
 from app.services.user_service import (
@@ -16,4 +23,9 @@ __all__ = [
     "create_user",
     "update_user",
     "reset_user_password",
+    "list_areas",
+    "get_area",
+    "create_area",
+    "update_area",
+    "deactivate_area",
 ]
