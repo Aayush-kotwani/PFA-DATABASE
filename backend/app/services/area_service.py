@@ -110,6 +110,16 @@ def update_area(area_id: int, data: dict[str, Any], actor_id: int) -> Area:
     """Update an area's fields with uniqueness validation and audit logging."""
     area = get_area(area_id)
 
+    # Protect short_code from changing once dogs have been registered under this area
+    if "short_code" in data and data["short_code"] is not None:
+        new_short_code = data["short_code"].strip().upper()
+        if area.last_dog_number > 0 and new_short_code != area.short_code:
+            raise APIError(
+                400,
+                "BAD_REQUEST",
+                "Cannot change short code for an area with registered dogs",
+            )
+
     name = data.get("name")
     short_code = data.get("short_code")
     color_hex = data.get("color_hex")

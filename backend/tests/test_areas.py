@@ -234,3 +234,54 @@ def test_area_not_found_404(client):
     assert client.get("/api/areas/99999", headers=headers).status_code == 404
     assert client.patch("/api/areas/99999", json={"name": "Ghost"}, headers=headers).status_code == 404
     assert client.post("/api/areas/99999/deactivate", headers=headers).status_code == 404
+
+
+def test_short_code_protection_when_dogs_exist(app, client):
+    """Short code can change when last_dog_number==0, but is blocked when last_dog_number > 0."""
+    admin_token = _get_admin_token(client)
+    headers = {"Authorization": f"Bearer {admin_token}"}
+
+    with app.app_context():
+        # Create a temporary area with last_dog_number = 0
+        area = Area(
+            name="Code Change Zone",
+            short_code="CCZ",
+            ward_no="Ward 8",
+            color_name="Lavender",
+            color_hex="#A78BFA",
+            last_dog_number=0,
+            is_active=True,
+        )
+        db.session.add(area)
+        db.session.commit()
+        area_id = area.id
+
+    # 1. When last_dog_number == 0: short_code can be updated
+    res1 = client.patch(f"/api/areas/{area_id}", json={"short_code": "CC1"}, headers=headers)
+    assert res1.status_code == 200
+    assert res1.get_json()["short_code"] == "CC1"
+
+    # 2. Simulate dogs having been registered (last_dog_number > 0)
+    with app.app_context():
+        area_obj = db.session.get(Area, area_id)
+        area_obj.last_dog_number = 3
+        db.session.commit()
+
+    # Attempting to change short_code now must be rejected with 400 BAD_REQUEST
+    res2 = client.patch(f"/api/areas/{area_id}", json={"short_code": "CC2"}, headers=headers)
+    assert res2.status_code == 400
+    assert res2.get_json()["error"]["code"] == "BAD_REQUEST"
+    assert "Cannot change short code" in res2.get_json()["error"]["message"]
+
+    # Updating other fields like landmark should still succeed
+    res3 = client.patch(f"/api/areas/{area_id}", json={"landmark": "New Landmark"}, headers=headers)
+    assert res3.status_code == 200
+    assert res3.get_json()["landmark"] == "New Landmark"
+
+    # Cleanup
+    with app.app_context():
+        AuditLog.query.filter_by(table_name="areas", record_id=area_id).delete()
+        area_obj = db.session.get(Area, area_id)
+        if area_obj:
+            db.session.delete(area_obj)
+        db.session.commit()
