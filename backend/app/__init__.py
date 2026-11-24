@@ -7,6 +7,7 @@ from app.config import Config
 from app.extensions import cors, db, jwt, migrate
 from app.routes.auth import auth_bp
 from app.routes.health import health_bp
+from app.routes.users import users_bp
 from app.utils.errors import register_error_handlers
 
 
@@ -63,5 +64,6 @@ def create_app(config_class: type[Config] = Config) -> APIFlask:
     # Register blueprints
     app.register_blueprint(health_bp)
     app.register_blueprint(auth_bp)
+    app.register_blueprint(users_bp)
 
     return app
