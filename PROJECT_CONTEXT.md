@@ -68,11 +68,15 @@ A web-based management system for an animal welfare NGO in India that rescues, s
 - **Common Mixins**:
   - `TimestampMixin`: `created_at` (timestamp, not null), `updated_at` (timestamp, auto-update)
   - `SoftDeleteMixin`: `is_deleted` (boolean, default false), `deleted_at` (timestamp, nullable)
+- **Data Quality & Analytics Rules**:
+  - Strict native SQL types: Date, DateTime, Numeric, Boolean, Enum (never store dates/numbers as plain text).
+  - Soft-delete strategy across records to preserve historical and longitudinal analytical context.
+  - Analytics-focused indexes on temporal queries: `dogs.created_at`, `cases.pickup_date`, `cases.surgery_date`, `cases.drop_date`.
 - **Tables**:
   1. `users`: Authentication and role definitions (`admin`, `volunteer`).
   2. `areas`: Geographic operational zones with ward, unique color hex, and counter for dog code generation. (Uses `is_active`, no soft delete).
-  3. `dogs`: Core animal profile, unique `dog_code`, unique `public_token`, GPS coordinates, sterilization status, guardian info, medical text. [Soft Delete]
-  4. `cases`: Individual pickup-to-release episodes, surgery details, prescription, surgeon name. [Soft Delete]
+  3. `dogs`: Core animal profile, unique `dog_code`, unique `public_token`, GPS coordinates, sterilization status, guardian info, medical text. Analytics fields: `age_group` (Enum: puppy, young, adult, senior), `body_condition` (Enum: underweight, normal, overweight), `is_pregnant` (Boolean). [Soft Delete]
+  4. `cases`: Individual pickup-to-release episodes, surgery details, prescription, surgeon name. Analytics fields: `surgery_outcome` (Enum: success, complication, death), `complication_type` (String 100), `recovery_days` (Integer). [Soft Delete]
   5. `vaccinations`: Vaccination records with vaccine name, date given, and next due date. [Soft Delete]
   6. `dog_photos`: Photos associated with dogs/cases, storage key, type (`intake`, `post_surgery`, `release`, `other`), primary flag. [Soft Delete]
   7. `audit_logs`: Immutable tracking table of data mutations (`create`, `update`, `delete`), table name, record ID, and JSONB diffs.
@@ -109,7 +113,7 @@ pfa new db app/
 - [x] **A1**: Recommend and create project folder structure, `.gitignore`, Git repo initialization, `PROJECT_CONTEXT.md`, and `STATUS.md`.
 - [x] **A2**: Virtual environment, dependencies (`requirements.txt`), minimal APIFlask app-factory, config from `.env`, CORS, and `/api/health` check.
 - [x] **A3**: PostgreSQL setup (Neon `pfa-dog-sterilization-db`), database connectivity verification (`SELECT 1`).
-- [ ] **A4**: SQLAlchemy models (one file per table, mixins for timestamps and soft delete, exports).
+- [x] **A4**: SQLAlchemy models (one file per table, mixins for timestamps and soft delete, analytics readiness columns, exports).
 - [ ] **A5**: Flask-Migrate setup, initial migration generation and execution, table verification.
 - [ ] **A6**: Safe database seeding script (`scripts/seed.py`) with admin, volunteer, and sample areas.
 
@@ -122,5 +126,5 @@ pfa new db app/
 - [ ] **B6**: Vaccinations CRUD & Due queries (`GET /api/vaccinations/due`).
 - [ ] **B7**: Photo upload & processing (Storage abstraction, LocalStorage, EXIF fix, WebP conversion).
 - [ ] **B8**: QR Code generation (`GET /api/dogs/{id}/qr.png`) & Public Verification (`GET /api/public/dogs/{public_token}`).
-- [ ] **B9**: Dashboard analytics, Audit log inspection, Admin Excel export.
+- [ ] **B9**: Dashboard analytics, Audit log inspection, Admin Excel export, Analytics export endpoint (`GET /api/analytics/export` flat joined CSV/JSON with default PII exclusion) and read-only PostgreSQL role guidance for BI tools.
 - [ ] **B10**: Hardening, automated tests (`pytest`), index checks, documentation (`README.md`), OpenAPI spec export.
