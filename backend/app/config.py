@@ -1,6 +1,7 @@
 """Application configuration loaded from environment variables."""
 
 import os
+from datetime import timedelta
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -28,9 +29,16 @@ class Config:
 
     SECRET_KEY = os.getenv("SECRET_KEY", "dev-only-fallback-key")
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "dev-only-jwt-fallback-key")
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(
+        minutes=int(os.getenv("JWT_ACCESS_TOKEN_EXPIRES_MINUTES", "60"))
+    )
 
     SQLALCHEMY_DATABASE_URI = _normalize_db_url(os.getenv("DATABASE_URL", ""))
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        "pool_pre_ping": True,
+        "pool_recycle": 300,
+    }
 
     CORS_ORIGINS = _parse_origins(
         os.getenv("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173")

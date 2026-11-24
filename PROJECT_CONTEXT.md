@@ -124,7 +124,7 @@ pfa new db app/
 - [x] **A6**: Safe database seeding script (`scripts/seed.py`) with admin, volunteer, and sample areas (Phase A Complete).
 
 ### Phase B - Backend APIs (Tested in Swagger UI)
-- [ ] **B1**: Authentication (`POST /api/auth/login`, `GET /api/auth/me`, password hashing, role decorators).
+- [x] **B1**: Authentication (`POST /api/auth/login`, `GET /api/auth/me`, password hashing, role decorators).
 - [ ] **B2**: User management (Admin only: list, create, update, password reset).
 - [ ] **B3**: Areas management (Public list/read, Admin create/update/deactivate, color validation).
 - [ ] **B4**: Dogs CRUD (Safe dog code generation, role-filtered serialization, filtering/search, pagination).

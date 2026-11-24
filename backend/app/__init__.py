@@ -1,10 +1,13 @@
 """Application factory for the Dog Sterilization Management System."""
 
 from apiflask import APIFlask
+from flask import jsonify
 
 from app.config import Config
-from app.extensions import cors, db, migrate
+from app.extensions import cors, db, jwt, migrate
+from app.routes.auth import auth_bp
 from app.routes.health import health_bp
+from app.utils.errors import register_error_handlers
 
 
 def create_app(config_class: type[Config] = Config) -> APIFlask:
@@ -33,6 +36,24 @@ def create_app(config_class: type[Config] = Config) -> APIFlask:
     # Initialize Flask-Migrate database migrations
     migrate.init_app(app, db)
 
+    # Initialize Flask-JWT-Extended authentication
+    jwt.init_app(app)
+
+    @jwt.unauthorized_loader
+    def unauthorized_callback(reason: str):
+        return jsonify({"error": {"code": "UNAUTHORIZED", "message": reason}}), 401
+
+    @jwt.invalid_token_loader
+    def invalid_token_callback(reason: str):
+        return jsonify({"error": {"code": "UNAUTHORIZED", "message": reason}}), 401
+
+    @jwt.expired_token_loader
+    def expired_token_callback(jwt_header, jwt_payload):
+        return jsonify({"error": {"code": "UNAUTHORIZED", "message": "Token has expired"}}), 401
+
+    # Register centralized error handlers and APIFlask error processor
+    register_error_handlers(app)
+
     # Register database models with SQLAlchemy metadata
     from app import models  # noqa: F401
 
@@ -41,5 +62,6 @@ def create_app(config_class: type[Config] = Config) -> APIFlask:
 
     # Register blueprints
     app.register_blueprint(health_bp)
+    app.register_blueprint(auth_bp)
 
     return app
