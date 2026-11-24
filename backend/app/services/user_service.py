@@ -1,6 +1,7 @@
 """Business logic services for User management."""
 
 from typing import Any
+from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.security import generate_password_hash
 
 from app.extensions import db
@@ -30,27 +31,37 @@ def create_user(data: dict[str, Any], actor_id: int) -> User:
         role=data.get("role", "volunteer"),
         is_active=data.get("is_active", True),
     )
-    db.session.add(user)
-    db.session.flush()  # Populate user.id for audit log
 
-    log_audit(
-        action="create",
-        table_name="users",
-        record_id=user.id,
-        user_id=actor_id,
-        changes={
-            "name": user.name,
-            "email": user.email,
-            "role": user.role,
-            "is_active": user.is_active,
-        },
-    )
-    db.session.commit()
+    try:
+        db.session.add(user)
+        db.session.flush()  # Populate user.id for audit log
+
+        log_audit(
+            action="create",
+            table_name="users",
+            record_id=user.id,
+            user_id=actor_id,
+            changes={
+                "name": user.name,
+                "email": user.email,
+                "role": user.role,
+                "is_active": user.is_active,
+            },
+        )
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        raise
+
     return user
 
 
 def update_user(user_id: int, data: dict[str, Any], actor_id: int) -> User:
     """Update user details (name, role, active status) with audit trail diff logging."""
+    # Prevent admin from deactivating or demoting their own account
+    if user_id == actor_id and (data.get("is_active") is False or data.get("role") == "volunteer"):
+        raise APIError(400, "BAD_REQUEST", "Admins cannot deactivate or demote their own account")
+
     user = db.session.get(User, user_id)
     if not user:
         raise APIError(404, "NOT_FOUND", "User not found")
@@ -65,14 +76,18 @@ def update_user(user_id: int, data: dict[str, Any], actor_id: int) -> User:
                 setattr(user, field, new_val)
 
     if diff:
-        log_audit(
-            action="update",
-            table_name="users",
-            record_id=user.id,
-            user_id=actor_id,
-            changes=diff,
-        )
-        db.session.commit()
+        try:
+            log_audit(
+                action="update",
+                table_name="users",
+                record_id=user.id,
+                user_id=actor_id,
+                changes=diff,
+            )
+            db.session.commit()
+        except SQLAlchemyError:
+            db.session.rollback()
+            raise
 
     return user
 
@@ -83,13 +98,18 @@ def reset_user_password(user_id: int, new_password: str, actor_id: int) -> dict[
     if not user:
         raise APIError(404, "NOT_FOUND", "User not found")
 
-    user.password_hash = generate_password_hash(new_password)
-    log_audit(
-        action="update",
-        table_name="users",
-        record_id=user.id,
-        user_id=actor_id,
-        changes={"password_reset": True},
-    )
-    db.session.commit()
+    try:
+        user.password_hash = generate_password_hash(new_password)
+        log_audit(
+            action="update",
+            table_name="users",
+            record_id=user.id,
+            user_id=actor_id,
+            changes={"password_reset": True},
+        )
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        raise
+
     return {"message": "Password reset successfully"}

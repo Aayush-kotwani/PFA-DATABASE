@@ -201,10 +201,10 @@ def test_user_not_found_404(client):
 
 
 def test_user_create_validation_error(client):
-    """Invalid payload (short password, bad email) returns 422 VALIDATION_ERROR."""
+    """Invalid payload (short password, bad email, >128 char password) returns 422 VALIDATION_ERROR."""
     token = _get_admin_token(client)
     res = client.post(
-        "/api/users/",
+        "/api/users",
         json={
             "name": "",
             "email": "not-an-email",
@@ -215,3 +215,48 @@ def test_user_create_validation_error(client):
     )
     assert res.status_code == 422
     assert res.get_json()["error"]["code"] == "VALIDATION_ERROR"
+
+    # Test password exceeding 128 characters
+    long_pass_res = client.post(
+        "/api/users",
+        json={
+            "name": "Long Password User",
+            "email": "longpass@ngo.org",
+            "password": "A" * 130,
+            "role": "volunteer",
+        },
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert long_pass_res.status_code == 422
+    assert long_pass_res.get_json()["error"]["code"] == "VALIDATION_ERROR"
+
+
+def test_admin_self_lockout_guard(client):
+    """Admin cannot deactivate or demote their own account."""
+    token = _get_admin_token(client)
+    headers = {"Authorization": f"Bearer {token}"}
+
+    # Fetch admin's own id
+    me_res = client.get("/api/auth/me", headers=headers)
+    assert me_res.status_code == 200
+    admin_id = me_res.get_json()["id"]
+
+    # 1. Attempt self-deactivation
+    deact_res = client.patch(
+        f"/api/users/{admin_id}",
+        json={"is_active": False},
+        headers=headers,
+    )
+    assert deact_res.status_code == 400
+    assert deact_res.get_json()["error"]["code"] == "BAD_REQUEST"
+    assert "deactivate or demote" in deact_res.get_json()["error"]["message"]
+
+    # 2. Attempt self-demotion to volunteer
+    demote_res = client.patch(
+        f"/api/users/{admin_id}",
+        json={"role": "volunteer"},
+        headers=headers,
+    )
+    assert demote_res.status_code == 400
+    assert demote_res.get_json()["error"]["code"] == "BAD_REQUEST"
+    assert "deactivate or demote" in demote_res.get_json()["error"]["message"]

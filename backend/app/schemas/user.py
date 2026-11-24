@@ -42,8 +42,8 @@ class UserCreateInSchema(Schema):
     password = String(
         required=True,
         load_only=True,
-        validate=Length(min=8),
-        metadata={"description": "Account password (min 8 characters)", "example": "SecurePass123!"},
+        validate=Length(min=8, max=128),
+        metadata={"description": "Account password (8-128 characters)", "example": "SecurePass123!"},
     )
     role = String(
         load_default="volunteer",
@@ -81,8 +81,8 @@ class UserResetPasswordInSchema(Schema):
     new_password = String(
         required=True,
         load_only=True,
-        validate=Length(min=8),
-        metadata={"description": "New account password (min 8 characters)", "example": "NewSecurePass123!"},
+        validate=Length(min=8, max=128),
+        metadata={"description": "New account password (8-128 characters)", "example": "NewSecurePass123!"},
     )
 
 
