@@ -3,7 +3,7 @@
 from apiflask import APIFlask
 
 from app.config import Config
-from app.extensions import cors, db
+from app.extensions import cors, db, migrate
 from app.routes.health import health_bp
 
 
@@ -29,6 +29,9 @@ def create_app(config_class: type[Config] = Config) -> APIFlask:
 
     # Initialize SQLAlchemy database extension
     db.init_app(app)
+
+    # Initialize Flask-Migrate database migrations
+    migrate.init_app(app, db)
 
     # Register database models with SQLAlchemy metadata
     from app import models  # noqa: F401
