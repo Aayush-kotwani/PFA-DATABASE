@@ -9,6 +9,13 @@ from app.services.area_service import (
 )
 from app.services.audit_service import log_audit
 from app.services.auth_service import authenticate_user
+from app.services.case_service import (
+    create_case,
+    get_case,
+    list_cases,
+    soft_delete_case,
+    update_case,
+)
 from app.services.dog_service import (
     create_dog,
     delete_dog,
@@ -40,4 +47,9 @@ __all__ = [
     "create_dog",
     "update_dog",
     "delete_dog",
+    "list_cases",
+    "get_case",
+    "create_case",
+    "update_case",
+    "soft_delete_case",
 ]

@@ -7,6 +7,7 @@ from app.config import Config
 from app.extensions import cors, db, jwt, migrate
 from app.routes.areas import areas_bp
 from app.routes.auth import auth_bp
+from app.routes.cases import cases_bp
 from app.routes.dogs import dogs_bp
 from app.routes.health import health_bp
 from app.routes.users import users_bp
@@ -69,5 +70,6 @@ def create_app(config_class: type[Config] = Config) -> APIFlask:
     app.register_blueprint(users_bp)
     app.register_blueprint(areas_bp)
     app.register_blueprint(dogs_bp)
+    app.register_blueprint(cases_bp)
 
     return app

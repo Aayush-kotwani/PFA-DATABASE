@@ -8,6 +8,13 @@ from app.schemas.area import (
     AreaUpdateInSchema,
 )
 from app.schemas.auth import LoginInSchema, LoginOutSchema, UserMeOutSchema
+from app.schemas.case import (
+    CaseCreateInSchema,
+    CaseListOutSchema,
+    CaseMessageOutSchema,
+    CaseOutSchema,
+    CaseUpdateInSchema,
+)
 from app.schemas.dog import (
     DogAreaSummarySchema,
     DogCreateInSchema,
@@ -48,4 +55,9 @@ __all__ = [
     "DogCreateInSchema",
     "DogUpdateInSchema",
     "DogMessageOutSchema",
+    "CaseOutSchema",
+    "CaseListOutSchema",
+    "CaseCreateInSchema",
+    "CaseUpdateInSchema",
+    "CaseMessageOutSchema",
 ]

@@ -128,7 +128,7 @@ pfa new db app/
 - [x] **B2**: User management (Admin only: list, create, update, password reset).
 - [x] **B3**: Areas management (Staff list/read, Admin create/update/deactivate, color validation).
 - [x] **B4**: Dogs CRUD (Safe dog code generation, role-filtered serialization, filtering/search, pagination).
-- [ ] **B5**: Cases CRUD (Nested under dog, lifecycle tracking from intake to release).
+- [x] **B5**: Cases CRUD (Nested under dog, lifecycle tracking from intake to release).
 - [ ] **B6**: Vaccinations CRUD & Due queries (`GET /api/vaccinations/due`).
 - [ ] **B7**: Photo upload & processing (Storage abstraction, LocalStorage, EXIF fix, WebP conversion).
 - [ ] **B7b**: Cloudflare R2 setup (account, private bucket, API token, R2Storage class, STORAGE_BACKEND=r2 switch, real upload test). MUST be done before deploying to Render.
