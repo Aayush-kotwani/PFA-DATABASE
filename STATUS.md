@@ -1,6 +1,6 @@
 # Project Execution Status
 
-- **Current Step**: B3 (Completed - Areas CRUD & Color Uniqueness verified)
+- **Current Step**: B4 (Completed - Dogs CRUD, row-locked dog_code generation, role-based phone hiding, and soft delete verified)
 - **Steps Completed**:
   - A1: Project folder structure, .gitignore, Git initialization, remote connection, PROJECT_CONTEXT.md, and STATUS.md.
   - A2: Virtual environment, requirements.txt, APIFlask app factory, .env config (.env.example), CORS, run.py, and GET /api/health endpoint.
@@ -10,6 +10,7 @@
   - A6: Idempotent database seed script (backend/scripts/seed.py) created and executed; verified 2 users (admin, volunteer) and 3 operational areas with unique colors.
   - B1: Authentication (POST /api/auth/login returning JWT, GET /api/auth/me, password verification, centralized APIError/APIFlask error handling, login_required & roles_required decorators).
   - B2: User Management (Admin only: GET /api/users with pagination, POST /api/users, PATCH /api/users/<id>, POST /api/users/<id>/reset-password, audit logging without passwords, volunteer 403 enforcement, self-lockout guard).
-  - B3: Areas CRUD (Staff GET list and read by ID, Admin POST create, PATCH update, POST deactivate; #RRGGBB hex validation, case-insensitive uniqueness checks on name, short_code, and color_hex, audit logging).
-- **Next Step**: B4 (Dogs CRUD: Safe dog_code generation using area counter with row locking, role-based response serializer removing guardian_phone for volunteers, search, filters, pagination, maps_url, lat/lng validation)
+  - B3: Areas CRUD (Staff GET list and read by ID, Admin POST create, PATCH update, POST deactivate; #RRGGBB hex validation, case-insensitive uniqueness checks on name, short_code, and color_hex, audit logging, short_code immutability guard).
+  - B4: Dogs CRUD (POST /api/dogs, GET /api/dogs with search/filters/pagination, GET /api/dogs/<id>, PATCH /api/dogs/<id>, DELETE /api/dogs/<id> admin-only soft delete; row-locked dog_code generation, maps_url, lat/lng validation, backend guardian_phone stripping and update-ignoring for volunteers).
+- **Next Step**: B5 (Cases CRUD nested under a dog, soft delete admin-only, full pickup-to-drop flow)
 - **Known Issues**: None

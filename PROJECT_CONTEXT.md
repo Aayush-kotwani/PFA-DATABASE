@@ -127,7 +127,7 @@ pfa new db app/
 - [x] **B1**: Authentication (`POST /api/auth/login`, `GET /api/auth/me`, password hashing, role decorators).
 - [x] **B2**: User management (Admin only: list, create, update, password reset).
 - [x] **B3**: Areas management (Staff list/read, Admin create/update/deactivate, color validation).
-- [ ] **B4**: Dogs CRUD (Safe dog code generation, role-filtered serialization, filtering/search, pagination).
+- [x] **B4**: Dogs CRUD (Safe dog code generation, role-filtered serialization, filtering/search, pagination).
 - [ ] **B5**: Cases CRUD (Nested under dog, lifecycle tracking from intake to release).
 - [ ] **B6**: Vaccinations CRUD & Due queries (`GET /api/vaccinations/due`).
 - [ ] **B7**: Photo upload & processing (Storage abstraction, LocalStorage, EXIF fix, WebP conversion).
