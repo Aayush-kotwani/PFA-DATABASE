@@ -82,11 +82,14 @@ class DogOutSchema(Schema):
     updated_at = DateTime(required=True)
 
     @post_dump
-    def strip_guardian_phone_for_non_admin(self, data: dict, **kwargs) -> dict:
-        """Enforce backend-level security: volunteers never receive guardian_phone."""
+    def format_dog_output(self, data: dict, **kwargs) -> dict:
+        """Strip guardian_phone for non-admins and round GPS coordinates to 6 decimals."""
         user = get_current_user()
         if not user or user.role != "admin":
             data.pop("guardian_phone", None)
+        for coord in ("latitude", "longitude"):
+            if data.get(coord) is not None:
+                data[coord] = round(float(data[coord]), 6)
         return data
 
 

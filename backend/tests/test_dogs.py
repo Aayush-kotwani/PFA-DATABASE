@@ -70,12 +70,23 @@ def test_dog_lifecycle_and_phone_hiding(app, client):
         dog_data = create_res.get_json()
         dog_id = dog_data["id"]
 
-        # Verify dog_code, area summary, maps_url, and phone stripped for volunteer
+        # Verify dog_code, area summary, maps_url, rounded GPS, and phone stripped for volunteer
         assert dog_data["dog_code"] == f"CTR-{orig_counter + 1:04d}"
         assert dog_data["area"]["name"] == "Central Zone - Ward 1"
         assert dog_data["area"]["color_hex"] == "#0D9488"
+        assert dog_data["latitude"] == 19.076
+        assert dog_data["longitude"] == 72.8777
         assert dog_data["maps_url"] == "https://www.google.com/maps?q=19.076000,72.877700"
         assert "guardian_phone" not in dog_data
+
+        # Verify audit_logs for create never stores plaintext guardian_phone
+        with app.app_context():
+            create_audit = AuditLog.query.filter_by(
+                table_name="dogs", record_id=dog_id, action="create"
+            ).first()
+            assert create_audit is not None
+            assert create_audit.changes.get("guardian_phone") == {"provided": True}
+            assert "+91-99999-11111" not in str(create_audit.changes)
 
         # 2. Volunteer GET single & list never expose guardian_phone
         get_vol = client.get(f"/api/dogs/{dog_id}", headers=vol_headers)
@@ -113,6 +124,18 @@ def test_dog_lifecycle_and_phone_hiding(app, client):
         )
         assert patch_adm.status_code == 200
         assert patch_adm.get_json()["guardian_phone"] == "+91-88888-22222"
+
+        # Verify audit_logs for update never stores plaintext guardian_phone
+        with app.app_context():
+            update_audit = (
+                AuditLog.query.filter_by(table_name="dogs", record_id=dog_id, action="update")
+                .order_by(AuditLog.id.desc())
+                .first()
+            )
+            assert update_audit is not None
+            assert update_audit.changes.get("guardian_phone") == {"updated": True}
+            assert "+91-88888-22222" not in str(update_audit.changes)
+            assert "+91-99999-11111" not in str(update_audit.changes)
 
         # 6. Search and filters
         today_str = date.today().isoformat()

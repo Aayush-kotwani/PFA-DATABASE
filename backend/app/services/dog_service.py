@@ -112,24 +112,30 @@ def create_dog(data: dict[str, Any], actor: User) -> Dog:
         db.session.add(dog)
         db.session.flush()
 
+        audit_changes: dict[str, Any] = {
+            "dog_code": dog.dog_code,
+            "area_id": dog.area_id,
+            "sex": dog.sex,
+            "status": dog.status,
+        }
+        # Never store plaintext guardian_phone in audit logs
+        if dog.guardian_phone:
+            audit_changes["guardian_phone"] = {"provided": True}
+
         log_audit(
             action="create",
             table_name="dogs",
             record_id=dog.id,
             user_id=actor.id,
-            changes={
-                "dog_code": dog.dog_code,
-                "area_id": dog.area_id,
-                "sex": dog.sex,
-                "status": dog.status,
-            },
+            changes=audit_changes,
         )
         db.session.commit()
+        db.session.refresh(dog)
     except SQLAlchemyError:
         db.session.rollback()
         raise
 
-    return get_dog(dog.id)
+    return dog
 
 
 def update_dog(dog_id: int, data: dict[str, Any], actor: User) -> Dog:
@@ -154,7 +160,11 @@ def update_dog(dog_id: int, data: dict[str, Any], actor: User) -> Dog:
             if isinstance(new_val, str):
                 new_val = new_val.strip()
             if old_val != new_val:
-                diff[field] = {"old": old_val, "new": new_val}
+                # Never store plaintext guardian_phone in audit logs
+                if field == "guardian_phone":
+                    diff[field] = {"updated": True}
+                else:
+                    diff[field] = {"old": old_val, "new": new_val}
                 setattr(dog, field, new_val)
 
     if diff:
