@@ -60,6 +60,24 @@ def _validate_case_dates(
         )
 
 
+def _sync_dog_status(dog: Dog, case: Case, actor_id: int) -> None:
+    """Auto-advance dog.status based on case milestones without overwriting deceased/lost."""
+    if dog.status in ("deceased", "lost"):
+        return
+
+    new_status = None
+    if case.drop_date and dog.status in ("registered", "picked_up", "in_surgery", "recovering"):
+        new_status = "released"
+    elif case.surgery_date and dog.status in ("registered", "picked_up", "in_surgery"):
+        new_status = "recovering"
+    elif case.pickup_date and dog.status == "registered":
+        new_status = "picked_up"
+
+    if new_status and new_status != dog.status:
+        dog.status = new_status
+        dog.updated_by = actor_id
+
+
 def list_cases(dog_id: int, page: int = 1, per_page: int = 20) -> dict[str, Any]:
     """Retrieve paginated list of non-deleted cases for a dog."""
     _get_active_dog(dog_id)
@@ -83,6 +101,10 @@ def create_case(dog_id: int, data: dict[str, Any], actor: User) -> Case:
         data.get("drop_date"),
     )
 
+    recovery_days = data.get("recovery_days")
+    if recovery_days is None and data.get("surgery_date") and data.get("drop_date"):
+        recovery_days = (data["drop_date"] - data["surgery_date"]).days
+
     case = Case(
         dog_id=dog_id,
         pickup_date=data["pickup_date"],
@@ -93,7 +115,7 @@ def create_case(dog_id: int, data: dict[str, Any], actor: User) -> Case:
         surgeon_name=data.get("surgeon_name"),
         surgery_outcome=data.get("surgery_outcome"),
         complication_type=data.get("complication_type"),
-        recovery_days=data.get("recovery_days"),
+        recovery_days=recovery_days,
         pre_op_notes=data.get("pre_op_notes"),
         post_op_notes=data.get("post_op_notes"),
         prescription_details=data.get("prescription_details"),
@@ -107,6 +129,7 @@ def create_case(dog_id: int, data: dict[str, Any], actor: User) -> Case:
     try:
         db.session.add(case)
         db.session.flush()
+        _sync_dog_status(case.dog, case, actor.id)
 
         audit_changes: dict[str, Any] = {
             "dog_id": case.dog_id,
@@ -144,6 +167,12 @@ def update_case(
     effective_drop = data["drop_date"] if "drop_date" in data else case.drop_date
     _validate_case_dates(effective_pickup, effective_surgery, effective_drop)
 
+    # Auto-calculate recovery_days when omitted/None and both surgery_date & drop_date exist
+    payload = dict(data)
+    if payload.get("recovery_days") is None and effective_surgery and effective_drop:
+        if case.recovery_days is None or "surgery_date" in payload or "drop_date" in payload or "recovery_days" in payload:
+            payload["recovery_days"] = (effective_drop - effective_surgery).days
+
     editable_fields = [
         "pickup_date", "pickup_location", "picked_by",
         "surgery_date", "procedure", "surgeon_name",
@@ -154,18 +183,19 @@ def update_case(
 
     diff: dict[str, Any] = {}
     for field in editable_fields:
-        if field in data:
+        if field in payload:
             old_val = _to_json_safe(getattr(case, field))
-            new_val = _to_json_safe(data[field])
+            new_val = _to_json_safe(payload[field])
             if isinstance(new_val, str):
                 new_val = new_val.strip()
             if old_val != new_val:
                 diff[field] = {"old": old_val, "new": new_val}
-                setattr(case, field, data[field].strip() if isinstance(data[field], str) else data[field])
+                setattr(case, field, payload[field].strip() if isinstance(payload[field], str) else payload[field])
 
     if diff:
         try:
             case.updated_by = actor.id
+            _sync_dog_status(case.dog, case, actor.id)
             log_audit(
                 action="update",
                 table_name="cases",

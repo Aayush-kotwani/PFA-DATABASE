@@ -60,6 +60,8 @@ def test_case_pickup_to_drop_flow_and_permissions(app, client):
         case_id = case_data["id"]
         assert case_data["dog_id"] == dog_id
         assert case_data["pickup_date"] == "2026-11-20"
+        # B5-01: dog status auto-advances to picked_up
+        assert client.get(f"/api/dogs/{dog_id}", headers=vol_headers).get_json()["status"] == "picked_up"
 
         # 2. Surgery update
         surgery_res = client.patch(
@@ -77,21 +79,24 @@ def test_case_pickup_to_drop_flow_and_permissions(app, client):
         )
         assert surgery_res.status_code == 200
         assert surgery_res.get_json()["surgery_outcome"] == "success"
+        # B5-01: dog status auto-advances to recovering
+        assert client.get(f"/api/dogs/{dog_id}", headers=vol_headers).get_json()["status"] == "recovering"
 
-        # 3. Drop update
+        # 3. Drop update (omitting recovery_days -> auto-calculated as 4)
         drop_res = client.patch(
             f"/api/dogs/{dog_id}/cases/{case_id}",
             json={
                 "drop_date": "2026-11-25",
                 "drop_location": "Clock Tower Gate",
                 "released_same_spot": True,
-                "recovery_days": 4,
             },
             headers=vol_headers,
         )
         assert drop_res.status_code == 200
         assert drop_res.get_json()["released_same_spot"] is True
         assert drop_res.get_json()["recovery_days"] == 4
+        # B5-01: dog status auto-advances to released
+        assert client.get(f"/api/dogs/{dog_id}", headers=vol_headers).get_json()["status"] == "released"
 
         # 4. List & Get
         list_res = client.get(f"/api/dogs/{dog_id}/cases", headers=vol_headers)
