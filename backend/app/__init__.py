@@ -10,6 +10,7 @@ from app.routes.auth import auth_bp
 from app.routes.cases import cases_bp
 from app.routes.dogs import dogs_bp
 from app.routes.health import health_bp
+from app.routes.photos import media_bp, photos_bp
 from app.routes.users import users_bp
 from app.routes.vaccinations import vaccinations_bp, vaccinations_due_bp
 from app.utils.errors import register_error_handlers
@@ -74,5 +75,7 @@ def create_app(config_class: type[Config] = Config) -> APIFlask:
     app.register_blueprint(cases_bp)
     app.register_blueprint(vaccinations_bp)
     app.register_blueprint(vaccinations_due_bp)
+    app.register_blueprint(photos_bp)
+    app.register_blueprint(media_bp)
 
     return app

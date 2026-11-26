@@ -56,6 +56,7 @@ def register_error_handlers(app) -> None:
             404: "NOT_FOUND",
             405: "METHOD_NOT_ALLOWED",
             409: "CONFLICT",
+            413: "FILE_TOO_LARGE",
             422: "VALIDATION_ERROR",
             500: "INTERNAL_SERVER_ERROR",
         }
@@ -77,6 +78,11 @@ def register_error_handlers(app) -> None:
     def handle_api_error(error: APIError):
         """Format custom APIError exceptions."""
         return error_response(error.status_code, error.code, error.message)
+
+    @app.errorhandler(413)
+    def handle_413(error):
+        """Format oversized request payload errors (exceeding MAX_CONTENT_LENGTH)."""
+        return error_response(413, "FILE_TOO_LARGE", "Image exceeds 10 MB limit")
 
     @app.errorhandler(500)
     def handle_500(error):

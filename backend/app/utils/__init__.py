@@ -2,6 +2,7 @@
 
 from app.utils.auth import get_current_user, login_required, roles_required
 from app.utils.errors import APIError, error_response, register_error_handlers
+from app.utils.images import process_uploaded_image
 from app.utils.pagination import PaginationQuerySchema, paginate_query
 
 __all__ = [
@@ -13,4 +14,5 @@ __all__ = [
     "roles_required",
     "PaginationQuerySchema",
     "paginate_query",
+    "process_uploaded_image",
 ]

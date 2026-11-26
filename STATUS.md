@@ -1,6 +1,6 @@
 # Project Execution Status
 
-- **Current Step**: B6 (Completed - Nested Vaccinations CRUD and /api/vaccinations/due endpoint verified)
+- **Current Step**: B7 (Completed - Storage abstraction, LocalStorage, EXIF-stripped WebP pipeline, /media route, and Dog Photos CRUD verified)
 - **Steps Completed**:
   - A1: Project folder structure, .gitignore, Git initialization, remote connection, PROJECT_CONTEXT.md, and STATUS.md.
   - A2: Virtual environment, requirements.txt, APIFlask app factory, .env config (.env.example), CORS, run.py, and GET /api/health endpoint.
@@ -14,5 +14,6 @@
   - B4: Dogs CRUD (POST /api/dogs, GET /api/dogs with search/filters/pagination, GET /api/dogs/<id>, PATCH /api/dogs/<id>, DELETE /api/dogs/<id> admin-only soft delete; row-locked dog_code generation, maps_url, lat/lng validation, backend guardian_phone stripping, audit log phone redaction).
   - B5: Cases CRUD (Nested under /api/dogs/<dog_id>/cases: list, create, get, update, admin-only soft delete; chronological date ordering validation, auto-advancing dog.status, auto-calculated recovery_days).
   - B6: Vaccinations CRUD (Nested under /api/dogs/<dog_id>/vaccinations: list, create, get, update, admin-only soft delete; case_id link validation, date ordering validation, and GET /api/vaccinations/due?days=30 grouping overdue and upcoming).
-- **Next Step**: B7 (Photos: storage abstraction + LocalStorage, multipart upload with EXIF fix, metadata strip, max 1200px resize, WebP conversion, list/set primary/admin delete)
+  - B7: Photos & Storage Abstraction (StorageBackend + LocalStorage, Pillow EXIF rotation fix + metadata strip + max 1200px resize + WebP conversion, /media/<key> dev route, /api/dogs/<dog_id>/photos CRUD with single primary photo enforcement).
+- **Next Step**: B7b (Cloudflare R2 setup: account, private bucket, API token, R2Storage class, STORAGE_BACKEND=r2 switch, real upload test), then B8
 - **Known Issues**: None

@@ -24,6 +24,13 @@ from app.schemas.dog import (
     DogOutSchema,
     DogUpdateInSchema,
 )
+from app.schemas.photo import (
+    PhotoListOutSchema,
+    PhotoMessageOutSchema,
+    PhotoOutSchema,
+    PhotoUpdateInSchema,
+    PhotoUploadInSchema,
+)
 from app.schemas.user import (
     UserCreateInSchema,
     UserListOutSchema,
@@ -78,4 +85,9 @@ __all__ = [
     "DueVaccinationQuerySchema",
     "DueVaccinationItemSchema",
     "DueVaccinationsOutSchema",
+    "PhotoOutSchema",
+    "PhotoListOutSchema",
+    "PhotoUploadInSchema",
+    "PhotoUpdateInSchema",
+    "PhotoMessageOutSchema",
 ]

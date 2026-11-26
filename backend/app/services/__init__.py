@@ -23,6 +23,12 @@ from app.services.dog_service import (
     list_dogs,
     update_dog,
 )
+from app.services.photo_service import (
+    list_photos,
+    soft_delete_photo,
+    update_photo,
+    upload_photo,
+)
 from app.services.user_service import (
     create_user,
     list_users,
@@ -66,4 +72,8 @@ __all__ = [
     "update_vaccination",
     "soft_delete_vaccination",
     "get_due_vaccinations",
+    "list_photos",
+    "upload_photo",
+    "update_photo",
+    "soft_delete_photo",
 ]
