@@ -32,6 +32,16 @@ from app.schemas.user import (
     UserResetPasswordInSchema,
     UserUpdateInSchema,
 )
+from app.schemas.vaccination import (
+    DueVaccinationItemSchema,
+    DueVaccinationQuerySchema,
+    DueVaccinationsOutSchema,
+    VaccinationCreateInSchema,
+    VaccinationListOutSchema,
+    VaccinationMessageOutSchema,
+    VaccinationOutSchema,
+    VaccinationUpdateInSchema,
+)
 
 __all__ = [
     "LoginInSchema",
@@ -60,4 +70,12 @@ __all__ = [
     "CaseCreateInSchema",
     "CaseUpdateInSchema",
     "CaseMessageOutSchema",
+    "VaccinationOutSchema",
+    "VaccinationListOutSchema",
+    "VaccinationCreateInSchema",
+    "VaccinationUpdateInSchema",
+    "VaccinationMessageOutSchema",
+    "DueVaccinationQuerySchema",
+    "DueVaccinationItemSchema",
+    "DueVaccinationsOutSchema",
 ]

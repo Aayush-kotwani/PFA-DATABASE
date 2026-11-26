@@ -29,6 +29,14 @@ from app.services.user_service import (
     reset_user_password,
     update_user,
 )
+from app.services.vaccination_service import (
+    create_vaccination,
+    get_due_vaccinations,
+    get_vaccination,
+    list_vaccinations,
+    soft_delete_vaccination,
+    update_vaccination,
+)
 
 __all__ = [
     "authenticate_user",
@@ -52,4 +60,10 @@ __all__ = [
     "create_case",
     "update_case",
     "soft_delete_case",
+    "list_vaccinations",
+    "get_vaccination",
+    "create_vaccination",
+    "update_vaccination",
+    "soft_delete_vaccination",
+    "get_due_vaccinations",
 ]

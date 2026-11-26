@@ -1,6 +1,6 @@
 """Automated tests for Dogs CRUD, role-based phone hiding, and soft delete (Step B4)."""
 
-from datetime import date
+from datetime import datetime, timezone
 import os
 
 from app.extensions import db
@@ -138,7 +138,7 @@ def test_dog_lifecycle_and_phone_hiding(app, client):
             assert "+91-99999-11111" not in str(update_audit.changes)
 
         # 6. Search and filters
-        today_str = date.today().isoformat()
+        today_str = datetime.now(timezone.utc).date().isoformat()
         search_res = client.get(
             f"/api/dogs?search=Clock+Tower&area_id={area_id}&sex=female"
             f"&status=registered&created_from={today_str}&created_to={today_str}",
