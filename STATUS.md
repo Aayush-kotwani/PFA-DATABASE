@@ -1,6 +1,6 @@
 # Project Execution Status
 
-- **Current Step**: B7 (Completed - Storage abstraction, LocalStorage, EXIF-stripped WebP pipeline, /media route, and Dog Photos CRUD verified)
+- **Current Step**: B7b (Completed - Cloudflare R2 private bucket, R2Storage boto3 backend, and live presigned URL upload verified)
 - **Steps Completed**:
   - A1: Project folder structure, .gitignore, Git initialization, remote connection, PROJECT_CONTEXT.md, and STATUS.md.
   - A2: Virtual environment, requirements.txt, APIFlask app factory, .env config (.env.example), CORS, run.py, and GET /api/health endpoint.
@@ -15,5 +15,6 @@
   - B5: Cases CRUD (Nested under /api/dogs/<dog_id>/cases: list, create, get, update, admin-only soft delete; chronological date ordering validation, auto-advancing dog.status, auto-calculated recovery_days).
   - B6: Vaccinations CRUD (Nested under /api/dogs/<dog_id>/vaccinations: list, create, get, update, admin-only soft delete; case_id link validation, date ordering validation, and GET /api/vaccinations/due?days=30 grouping overdue and upcoming).
   - B7: Photos & Storage Abstraction (StorageBackend + LocalStorage, Pillow EXIF rotation fix + metadata strip + max 1200px resize + WebP conversion, /media/<key> dev route, /api/dogs/<dog_id>/photos CRUD with single primary photo enforcement).
-- **Next Step**: B7b (Cloudflare R2 setup: account, private bucket, API token, R2Storage class, STORAGE_BACKEND=r2 switch, real upload test), then B8
+  - B7b: Cloudflare R2 Storage (Private bucket dog-sterilization-media-dev, R2Storage with boto3 s3v4 presigned URLs, STORAGE_BACKEND=r2 switch, live upload & privacy verification).
+- **Next Step**: B8 (QR Code generation GET /api/dogs/<id>/qr.png & Public Verification GET /api/public/dogs/<public_token>)
 - **Known Issues**: None

@@ -131,7 +131,7 @@ pfa new db app/
 - [x] **B5**: Cases CRUD (Nested under dog, lifecycle tracking from intake to release).
 - [x] **B6**: Vaccinations CRUD & Due queries (`GET /api/vaccinations/due`).
 - [x] **B7**: Photo upload & processing (Storage abstraction, LocalStorage, EXIF fix, WebP conversion).
-- [ ] **B7b**: Cloudflare R2 setup (account, private bucket, API token, R2Storage class, STORAGE_BACKEND=r2 switch, real upload test). MUST be done before deploying to Render.
+- [x] **B7b**: Cloudflare R2 setup (account, private bucket, API token, R2Storage class, STORAGE_BACKEND=r2 switch, real upload test). MUST be done before deploying to Render.
 - [ ] **B8**: QR Code generation (`GET /api/dogs/{id}/qr.png`) & Public Verification (`GET /api/public/dogs/{public_token}`).
 - [ ] **B9**: Dashboard analytics, Audit log inspection, Admin Excel export, Analytics export endpoint (`GET /api/analytics/export` flat joined CSV/JSON with default PII exclusion) and read-only PostgreSQL role guidance for BI tools.
 - [ ] **B10**: Hardening, automated tests (`pytest`), index checks, documentation (`README.md`), OpenAPI spec export.

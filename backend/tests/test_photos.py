@@ -53,6 +53,7 @@ def _make_png(width: int = 400, height: int = 300) -> BytesIO:
 
 def test_photo_upload_processing_primary_and_soft_delete(app, client):
     """Test EXIF fix/strip, resize <=1200px, WebP conversion, /media serving, primary toggle, and soft delete."""
+    app.config["STORAGE_BACKEND"] = "local"
     vol_headers = _volunteer_headers(client)
     adm_headers = _admin_headers(client)
 
