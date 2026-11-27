@@ -44,11 +44,15 @@ A web-based management system for an animal welfare NGO in India that rescues, s
    - Primary database provider: **Neon (Serverless PostgreSQL)**.
    - Development & test database: `pfa-dog-sterilization-db` is the standardized universal database used for development, testing, and migration verification.
    - Production database: A completely separate database instance/branch will be created and used exclusively for live production deployment later.
-5. **Production Rules**:
-   - Local disk storage (STORAGE_BACKEND=local) is for development ONLY. Production must use STORAGE_BACKEND=r2, because Render's disk is wiped on every restart or redeploy.
-   - Production uses a separate Neon database, never `pfa-dog-sterilization-db` if that holds test data.
-   - Production .env must have new strong SECRET_KEY, JWT_SECRET_KEY and admin/volunteer passwords, never the seed placeholders.
+5. **Production & Permanent Security Rules**:
+   - Production must set `FLASK_ENV=production`.
+   - Production secrets (`SECRET_KEY`, `JWT_SECRET_KEY`, admin/volunteer passwords) must be strong (>= 32 chars) and never the `.env.example` placeholders.
    - Debug mode must be off in production.
+   - Swagger UI (`/docs` and `/openapi.json`) is off in production unless explicitly enabled via `ENABLE_SWAGGER=true`.
+   - Local disk storage (`STORAGE_BACKEND=local`) is for development ONLY. Production must use `STORAGE_BACKEND=r2`, because Render's disk is wiped on every restart or redeploy.
+   - Production uses a separate Neon database, never `pfa-dog-sterilization-db` if that holds test data.
+   - Exports are admin-only, sanitised against formula/CSV injection, and audit-logged.
+   - Every new route must have an auth decorator (unless explicitly public), a rate limit where relevant, and an automated test.
 
 ---
 
@@ -135,3 +139,22 @@ pfa new db app/
 - [x] **B8**: QR Code generation (`GET /api/dogs/{id}/qr.png`) & Public Verification (`GET /api/public/dogs/{public_token}`).
 - [x] **B9**: Dashboard analytics, Audit log inspection, Admin Excel export, Analytics export endpoint (`GET /api/analytics/export` flat joined CSV/JSON with default PII exclusion) and read-only PostgreSQL role guidance for BI tools.
 - [x] **B10**: Hardening, automated tests (`pytest`), index checks, documentation (`README.md`), OpenAPI spec export. (Phase B & Backend Complete!)
+
+---
+
+## 8. Security Checklist
+- [ ] **SEC-01** *(High)*: Rate limiting (`Flask-Limiter`) on login, public, photo upload, export, and QR endpoints with 429 JSON + `Retry-After`.
+- [ ] **SEC-02** *(High)*: Formula/CSV injection sanitization for all text cells in Excel and CSV exports.
+- [ ] **SEC-03** *(Critical)*: Strict production secret enforcement (`SECRET_KEY`, `JWT_SECRET_KEY` >= 32 chars, no placeholders/insecure fallbacks).
+- [ ] **SEC-04** *(High)*: JWT token revocation via `token_version` claim incremented on password reset/change, role change, and deactivation.
+- [ ] **SEC-05** *(Medium)*: `ProxyFix` middleware configured from env so rate limits and logs use real client IPs behind Render/proxies.
+- [ ] **SEC-06** *(Medium)*: Security response headers (`X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`, `Cache-Control`, HSTS in production).
+- [ ] **SEC-07** *(Medium)*: Audit logging for every Excel and Analytics export (`action="export"`, format, dataset, user ID, row count, no PII).
+- [ ] **SEC-08** *(Low)*: Escape `%` and `_` wildcards in SQL `ILIKE` search queries.
+- [ ] **SEC-09** *(Medium)*: Image decompression-bomb protection (`Image.MAX_IMAGE_PIXELS` + `DecompressionBombError` -> 422) and per-dog active photo cap.
+- [ ] **SEC-10** *(Medium)*: Structured security logging (failed logins, sensitive admin actions, request ID, no secrets/stack traces in 500 responses).
+- [ ] **SEC-11** *(Medium)*: `ENABLE_SWAGGER` toggle disabling `/docs` and `/openapi.json` when `FLASK_ENV=production` unless explicitly enabled.
+- [ ] **SEC-12** *(Low)*: Self-service password change (`POST /api/auth/change-password`) with rate limit, `token_version` bump, and audit log.
+- [ ] **SEC-13** *(Low)*: Admin-only public QR token rotation (`POST /api/dogs/{id}/rotate-token`) invalidating old QR links.
+- [ ] **SEC-14** *(Low)*: Exact dependency pinning in `requirements.txt` and `pip-audit` vulnerability verification.
+- [ ] **SEC-15** *(High)*: Remove hardcoded `debug=True` in `run.py` and block `scripts/seed.py` in production or with placeholder passwords.
