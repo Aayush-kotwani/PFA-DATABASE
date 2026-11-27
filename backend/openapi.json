@@ -1,0 +1,5471 @@
+{
+  "info": {
+    "title": "Dog Sterilization Management API",
+    "version": "0.1.0"
+  },
+  "tags": [
+    {
+      "name": "Health"
+    },
+    {
+      "name": "Auth"
+    },
+    {
+      "name": "Users"
+    },
+    {
+      "name": "Areas"
+    },
+    {
+      "name": "Dogs"
+    },
+    {
+      "name": "Cases"
+    },
+    {
+      "name": "Vaccinations"
+    },
+    {
+      "name": "Vaccinations"
+    },
+    {
+      "name": "Photos"
+    },
+    {
+      "name": "Media"
+    },
+    {
+      "name": "Public"
+    },
+    {
+      "name": "Dashboard"
+    },
+    {
+      "name": "Audit Logs"
+    },
+    {
+      "name": "Exports & Analytics"
+    }
+  ],
+  "paths": {
+    "/api/dogs": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Page number (1-based index)",
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1,
+              "example": 1
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "per_page",
+            "description": "Number of items per page (1-100)",
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1,
+              "maximum": 100,
+              "example": 20
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "description": "Search dog_code, guardian_name, or landmark",
+            "schema": {
+              "type": "string"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "area_id",
+            "description": "Filter by area ID",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "description": "Filter by dog status",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "registered",
+                "picked_up",
+                "in_surgery",
+                "recovering",
+                "released",
+                "deceased",
+                "lost"
+              ]
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "sex",
+            "description": "Filter by sex",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "male",
+                "female",
+                "unknown"
+              ]
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "created_from",
+            "description": "Filter created_at >= YYYY-MM-DD",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2026-01-01"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "created_to",
+            "description": "Filter created_at <= YYYY-MM-DD",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2026-12-31"
+            },
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DogListOutSchema"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            },
+            "description": "Validation error"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Authentication error"
+          }
+        },
+        "tags": [
+          "Dogs"
+        ],
+        "summary": "List dogs",
+        "description": "Retrieve paginated list of non-deleted dogs with search and filters.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "parameters": [],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DogOutSchema1"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            },
+            "description": "Validation error"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Authentication error"
+          }
+        },
+        "tags": [
+          "Dogs"
+        ],
+        "summary": "Register a new dog",
+        "description": "Create a new dog profile with auto-generated area dog_code.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DogCreateInSchema"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/users": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Page number (1-based index)",
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1,
+              "example": 1
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "per_page",
+            "description": "Number of items per page (1-100)",
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1,
+              "maximum": 100,
+              "example": 20
+            },
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserListOutSchema"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            },
+            "description": "Validation error"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Authentication error"
+          }
+        },
+        "tags": [
+          "Users"
+        ],
+        "summary": "List users (Admin only)",
+        "description": "Retrieve paginated list of all users.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "parameters": [],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserOutSchema1"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            },
+            "description": "Validation error"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Authentication error"
+          }
+        },
+        "tags": [
+          "Users"
+        ],
+        "summary": "Create user (Admin only)",
+        "description": "Register a new staff user with an assigned role.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserCreateInSchema"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/areas": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Page number (1-based index)",
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1,
+              "example": 1
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "per_page",
+            "description": "Number of items per page (1-100)",
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1,
+              "maximum": 100,
+              "example": 20
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "is_active",
+            "description": "Filter by active status (optional)",
+            "schema": {
+              "type": "boolean",
+              "example": true
+            },
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AreaListOutSchema"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            },
+            "description": "Validation error"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Authentication error"
+          }
+        },
+        "tags": [
+          "Areas"
+        ],
+        "summary": "List operational areas",
+        "description": "Retrieve paginated list of operational areas with optional active filter.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "parameters": [],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AreaOutSchema1"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            },
+            "description": "Validation error"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Authentication error"
+          }
+        },
+        "tags": [
+          "Areas"
+        ],
+        "summary": "Create operational area (Admin only)",
+        "description": "Register a new geographic operational zone with a unique color hex and short code.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AreaCreateInSchema"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/health": {
+      "get": {
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthOutSchema"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": {
+                    "code": "DATABASE_UNAVAILABLE",
+                    "message": "Database connection failed"
+                  }
+                }
+              }
+            },
+            "description": "Database unavailable"
+          }
+        },
+        "tags": [
+          "Health"
+        ],
+        "summary": "Health check",
+        "description": "Verify that the API server is running and database is reachable."
+      }
+    },
+    "/api/auth/me": {
+      "get": {
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserMeOutSchema"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Authentication error"
+          }
+        },
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Get current user profile",
+        "description": "Retrieve account details of the currently authenticated user.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginOutSchema"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            },
+            "description": "Validation error"
+          }
+        },
+        "tags": [
+          "Auth"
+        ],
+        "summary": "User login",
+        "description": "Authenticate with email and password to receive a JWT access token.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginInSchema"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/audit-logs": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Page number (1-based index)",
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1,
+              "example": 1
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "per_page",
+            "description": "Number of items per page (1-100)",
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1,
+              "maximum": 100,
+              "example": 20
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "user_id",
+            "description": "Filter by actor user ID",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "action",
+            "description": "Filter by mutation action",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "create",
+                "update",
+                "delete"
+              ]
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "table_name",
+            "description": "Filter by target table name",
+            "schema": {
+              "type": "string",
+              "example": "dogs"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "record_id",
+            "description": "Filter by target record ID",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "date_from",
+            "description": "Filter created_at >= YYYY-MM-DD",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "date_to",
+            "description": "Filter created_at <= YYYY-MM-DD",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditLogListOutSchema"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            },
+            "description": "Validation error"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Authentication error"
+          }
+        },
+        "tags": [
+          "Audit Logs"
+        ],
+        "summary": "List audit logs (Admin only)",
+        "description": "Retrieve paginated audit trail entries with optional filters.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/media/{key}": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "tags": [
+          "Media"
+        ],
+        "summary": "Serve local media file (Development only)",
+        "description": "Serve uploaded images from UPLOAD_DIR when STORAGE_BACKEND is 'local'."
+      }
+    },
+    "/api/export/excel": {
+      "get": {
+        "parameters": [],
+        "responses": {
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Authentication error"
+          },
+          "200": {
+            "content": {
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {}
+            },
+            "description": "Excel (.xlsx) file download"
+          }
+        },
+        "tags": [
+          "Exports & Analytics"
+        ],
+        "summary": "Export workbook to Excel (Admin only)",
+        "description": "Download a 3-sheet .xlsx workbook (Dogs, Cases, Vaccinations).",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/dashboard/stats": {
+      "get": {
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardStatsOutSchema"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Authentication error"
+          }
+        },
+        "tags": [
+          "Dashboard"
+        ],
+        "summary": "Get dashboard statistics",
+        "description": "Return live totals, status breakdown, area counts, monthly sterilizations, and due vaccinations.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/vaccinations/due": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "days",
+            "description": "Lookahead window in days (1-365)",
+            "schema": {
+              "type": "integer",
+              "default": 30,
+              "minimum": 1,
+              "maximum": 365,
+              "example": 30
+            },
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DueVaccinationsOutSchema"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            },
+            "description": "Validation error"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Authentication error"
+          }
+        },
+        "tags": [
+          "Vaccinations"
+        ],
+        "summary": "Get overdue and upcoming vaccinations",
+        "description": "List overdue vaccinations and those due within the next N days.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/analytics/export": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "format",
+            "description": "Export format: csv or json",
+            "schema": {
+              "type": "string",
+              "default": "csv",
+              "enum": [
+                "csv",
+                "json"
+              ],
+              "example": "csv"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "include_personal",
+            "description": "Include guardian contact and exact GPS coordinates (default False)",
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "example": false
+            },
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            },
+            "description": "Validation error"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Authentication error"
+          }
+        },
+        "tags": [
+          "Exports & Analytics"
+        ],
+        "summary": "Export flat analytics dataset (Admin only)",
+        "description": "Export flat joined dog+area+latest_case+vaccination_count as CSV (streamed) or JSON. Personal data is excluded by default.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/dogs/{dog_id}": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dog_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DogOutSchema1"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Authentication error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "tags": [
+          "Dogs"
+        ],
+        "summary": "Get dog details",
+        "description": "Retrieve details for a single non-deleted dog by ID.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dog_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DogOutSchema1"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            },
+            "description": "Validation error"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Authentication error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "tags": [
+          "Dogs"
+        ],
+        "summary": "Update dog details",
+        "description": "Update dog profile fields. Volunteers' guardian_phone updates are ignored.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DogUpdateInSchema"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dog_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DogMessageOutSchema"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Authentication error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "tags": [
+          "Dogs"
+        ],
+        "summary": "Soft-delete dog (Admin only)",
+        "description": "Mark a dog record as soft-deleted.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/users/{user_id}": {
+      "patch": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserOutSchema1"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            },
+            "description": "Validation error"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Authentication error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "tags": [
+          "Users"
+        ],
+        "summary": "Update user (Admin only)",
+        "description": "Modify a user's name, role, or active status.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdateInSchema"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/areas/{area_id}": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "area_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AreaOutSchema1"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Authentication error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "tags": [
+          "Areas"
+        ],
+        "summary": "Get area details",
+        "description": "Retrieve details for a single operational area by ID.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "area_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AreaOutSchema1"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            },
+            "description": "Validation error"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Authentication error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "tags": [
+          "Areas"
+        ],
+        "summary": "Update operational area (Admin only)",
+        "description": "Modify area name, ward, landmark, feeder contacts, or color hex.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AreaUpdateInSchema"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/dogs/{dog_id}/cases": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dog_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Page number (1-based index)",
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1,
+              "example": 1
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "per_page",
+            "description": "Number of items per page (1-100)",
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1,
+              "maximum": 100,
+              "example": 20
+            },
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CaseListOutSchema"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            },
+            "description": "Validation error"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Authentication error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "tags": [
+          "Cases"
+        ],
+        "summary": "List cases for a dog",
+        "description": "Retrieve paginated list of non-deleted cases for a specific dog.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dog_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CaseOutSchema1"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            },
+            "description": "Validation error"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Authentication error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "tags": [
+          "Cases"
+        ],
+        "summary": "Create a case for a dog",
+        "description": "Record a new pickup/surgery/release case under a dog.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CaseCreateInSchema"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/dogs/{dog_id}/qr.png": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dog_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Authentication error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Not found"
+          },
+          "200": {
+            "content": {
+              "image/png": {}
+            },
+            "description": "QR Code PNG image"
+          }
+        },
+        "tags": [
+          "Dogs"
+        ],
+        "summary": "Download dog QR code PNG",
+        "description": "Generate a QR code PNG encoding the public dog verification URL.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/dogs/{dog_id}/photos": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dog_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotoListOutSchema"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Authentication error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "tags": [
+          "Photos"
+        ],
+        "summary": "List photos for a dog",
+        "description": "Retrieve all non-deleted photos for a dog, ordered with primary photo first.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dog_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotoOutSchema1"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            },
+            "description": "Validation error"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Authentication error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "tags": [
+          "Photos"
+        ],
+        "summary": "Upload a dog photo",
+        "description": "Upload a JPEG/PNG/WebP photo (max 10 MB). Fixes EXIF rotation, strips metadata, resizes <=1200px, converts to WebP.",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/PhotoUploadInSchema"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/areas/{area_id}/deactivate": {
+      "post": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "area_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AreaOutSchema1"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Authentication error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "tags": [
+          "Areas"
+        ],
+        "summary": "Deactivate operational area (Admin only)",
+        "description": "Set an area's is_active status to False.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/dogs/{dog_id}/vaccinations": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dog_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Page number (1-based index)",
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1,
+              "example": 1
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "per_page",
+            "description": "Number of items per page (1-100)",
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1,
+              "maximum": 100,
+              "example": 20
+            },
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VaccinationListOutSchema"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            },
+            "description": "Validation error"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Authentication error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "tags": [
+          "Vaccinations"
+        ],
+        "summary": "List vaccinations for a dog",
+        "description": "Retrieve paginated list of non-deleted vaccinations for a specific dog.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dog_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VaccinationOutSchema1"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            },
+            "description": "Validation error"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Authentication error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "tags": [
+          "Vaccinations"
+        ],
+        "summary": "Record a vaccination for a dog",
+        "description": "Create a new vaccination record under a dog.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VaccinationCreateInSchema"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/public/dogs/{public_token}": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "public_token",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicDogOutSchema"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "tags": [
+          "Public"
+        ],
+        "summary": "Get public dog verification info",
+        "description": "Unauthenticated endpoint for QR scan pages. Returns only non-sensitive status, area, photo, and latest vaccination."
+      }
+    },
+    "/api/users/{user_id}/reset-password": {
+      "post": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserMessageOutSchema"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            },
+            "description": "Validation error"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Authentication error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "tags": [
+          "Users"
+        ],
+        "summary": "Reset user password (Admin only)",
+        "description": "Administratively reset a user's password.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserResetPasswordInSchema"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/dogs/{dog_id}/cases/{case_id}": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dog_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "case_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CaseOutSchema1"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Authentication error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "tags": [
+          "Cases"
+        ],
+        "summary": "Get case details",
+        "description": "Retrieve a single non-deleted case belonging to a dog.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dog_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "case_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CaseOutSchema1"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            },
+            "description": "Validation error"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Authentication error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "tags": [
+          "Cases"
+        ],
+        "summary": "Update a case",
+        "description": "Update surgery, prescription, outcome, or drop details on a case.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CaseUpdateInSchema"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dog_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "case_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CaseMessageOutSchema"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Authentication error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "tags": [
+          "Cases"
+        ],
+        "summary": "Soft-delete case (Admin only)",
+        "description": "Mark a case record as soft-deleted.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/dogs/{dog_id}/photos/{photo_id}": {
+      "patch": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dog_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "photo_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotoOutSchema1"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            },
+            "description": "Validation error"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Authentication error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "tags": [
+          "Photos"
+        ],
+        "summary": "Update photo metadata or primary flag",
+        "description": "Update photo_type, case_id, or mark a photo as primary.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PhotoUpdateInSchema"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dog_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "photo_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotoMessageOutSchema"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Authentication error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "tags": [
+          "Photos"
+        ],
+        "summary": "Soft-delete photo (Admin only)",
+        "description": "Mark a dog photo record as soft-deleted.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/dogs/{dog_id}/vaccinations/{vaccination_id}": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dog_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "vaccination_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VaccinationOutSchema1"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Authentication error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "tags": [
+          "Vaccinations"
+        ],
+        "summary": "Get vaccination details",
+        "description": "Retrieve a single non-deleted vaccination belonging to a dog.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dog_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "vaccination_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VaccinationOutSchema1"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            },
+            "description": "Validation error"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Authentication error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "tags": [
+          "Vaccinations"
+        ],
+        "summary": "Update a vaccination",
+        "description": "Update vaccination fields such as batch_no, next_due_date, or notes.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VaccinationUpdateInSchema"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dog_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "vaccination_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VaccinationMessageOutSchema"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Authentication error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "tags": [
+          "Vaccinations"
+        ],
+        "summary": "Soft-delete vaccination (Admin only)",
+        "description": "Mark a vaccination record as soft-deleted.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "openapi": "3.1.0",
+  "components": {
+    "schemas": {
+      "DogAreaSummarySchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Central Zone - Ward 1"
+          },
+          "short_code": {
+            "type": "string",
+            "example": "CTR"
+          },
+          "color_name": {
+            "type": "string",
+            "example": "Teal"
+          },
+          "color_hex": {
+            "type": "string",
+            "example": "#0D9488"
+          }
+        },
+        "required": [
+          "color_hex",
+          "color_name",
+          "id",
+          "name",
+          "short_code"
+        ],
+        "additionalProperties": false
+      },
+      "DogOutSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "dog_code": {
+            "type": "string",
+            "example": "CTR-0001"
+          },
+          "public_token": {
+            "type": "string"
+          },
+          "area_id": {
+            "type": "integer",
+            "example": 1
+          },
+          "area": {
+            "$ref": "#/components/schemas/DogAreaSummarySchema"
+          },
+          "sex": {
+            "type": "string",
+            "example": "female"
+          },
+          "approx_age": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "2 years"
+          },
+          "age_group": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "adult"
+          },
+          "coat_description": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "Brown and white short coat"
+          },
+          "weight_kg": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "example": 14.5
+          },
+          "body_condition": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "normal"
+          },
+          "is_pregnant": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "example": false
+          },
+          "temperament": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "Friendly, calm"
+          },
+          "guardian_name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "Ramesh Kumar"
+          },
+          "guardian_phone": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "+91-98765-00001"
+          },
+          "capture_address": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "Behind Main Market Gate"
+          },
+          "landmark": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "Near Municipal Clock Tower"
+          },
+          "latitude": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "example": 19.076
+          },
+          "longitude": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "example": 72.8777
+          },
+          "maps_url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "https://www.google.com/maps?q=19.076000,72.877700"
+          },
+          "ear_notch_done": {
+            "type": "boolean",
+            "example": false
+          },
+          "status": {
+            "type": "string",
+            "example": "registered"
+          },
+          "medical_conditions": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "medical_history": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "created_by": {
+            "type": "integer"
+          },
+          "updated_by": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "area",
+          "area_id",
+          "created_at",
+          "created_by",
+          "dog_code",
+          "ear_notch_done",
+          "id",
+          "public_token",
+          "sex",
+          "status",
+          "updated_at"
+        ],
+        "additionalProperties": false
+      },
+      "DogListOutSchema": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DogOutSchema"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "example": 1
+          },
+          "per_page": {
+            "type": "integer",
+            "example": 20
+          },
+          "total": {
+            "type": "integer",
+            "example": 1
+          }
+        },
+        "required": [
+          "items",
+          "page",
+          "per_page",
+          "total"
+        ],
+        "additionalProperties": false
+      },
+      "ValidationError": {
+        "properties": {
+          "detail": {
+            "type": "object",
+            "properties": {
+              "<location>": {
+                "type": "object",
+                "properties": {
+                  "<field_name>": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "HTTPError": {
+        "properties": {
+          "detail": {
+            "type": "object"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "DogOutSchema1": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "dog_code": {
+            "type": "string",
+            "example": "CTR-0001"
+          },
+          "public_token": {
+            "type": "string"
+          },
+          "area_id": {
+            "type": "integer",
+            "example": 1
+          },
+          "area": {
+            "$ref": "#/components/schemas/DogAreaSummarySchema"
+          },
+          "sex": {
+            "type": "string",
+            "example": "female"
+          },
+          "approx_age": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "2 years"
+          },
+          "age_group": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "adult"
+          },
+          "coat_description": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "Brown and white short coat"
+          },
+          "weight_kg": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "example": 14.5
+          },
+          "body_condition": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "normal"
+          },
+          "is_pregnant": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "example": false
+          },
+          "temperament": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "Friendly, calm"
+          },
+          "guardian_name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "Ramesh Kumar"
+          },
+          "guardian_phone": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "+91-98765-00001"
+          },
+          "capture_address": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "Behind Main Market Gate"
+          },
+          "landmark": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "Near Municipal Clock Tower"
+          },
+          "latitude": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "example": 19.076
+          },
+          "longitude": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "example": 72.8777
+          },
+          "maps_url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "https://www.google.com/maps?q=19.076000,72.877700"
+          },
+          "ear_notch_done": {
+            "type": "boolean",
+            "example": false
+          },
+          "status": {
+            "type": "string",
+            "example": "registered"
+          },
+          "medical_conditions": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "medical_history": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "created_by": {
+            "type": "integer"
+          },
+          "updated_by": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "area",
+          "area_id",
+          "created_at",
+          "created_by",
+          "dog_code",
+          "ear_notch_done",
+          "id",
+          "public_token",
+          "sex",
+          "status",
+          "updated_at"
+        ],
+        "additionalProperties": false
+      },
+      "DogCreateInSchema": {
+        "type": "object",
+        "properties": {
+          "area_id": {
+            "type": "integer",
+            "example": 1
+          },
+          "sex": {
+            "type": "string",
+            "default": "unknown",
+            "enum": [
+              "male",
+              "female",
+              "unknown"
+            ]
+          },
+          "approx_age": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 30
+          },
+          "age_group": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "puppy",
+              "young",
+              "adult",
+              "senior",
+              null
+            ]
+          },
+          "coat_description": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 200
+          },
+          "weight_kg": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0.0,
+            "maximum": 150.0
+          },
+          "body_condition": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "underweight",
+              "normal",
+              "overweight",
+              null
+            ]
+          },
+          "is_pregnant": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "temperament": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "guardian_name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 100
+          },
+          "guardian_phone": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 20
+          },
+          "capture_address": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "landmark": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 200
+          },
+          "latitude": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": -90.0,
+            "maximum": 90.0
+          },
+          "longitude": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": -180.0,
+            "maximum": 180.0
+          },
+          "ear_notch_done": {
+            "type": "boolean",
+            "default": false
+          },
+          "status": {
+            "type": "string",
+            "default": "registered",
+            "enum": [
+              "registered",
+              "picked_up",
+              "in_surgery",
+              "recovering",
+              "released",
+              "deceased",
+              "lost"
+            ]
+          },
+          "medical_conditions": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "medical_history": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "area_id"
+        ],
+        "additionalProperties": false
+      },
+      "UserOutSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "NGO Admin"
+          },
+          "email": {
+            "type": "string",
+            "example": "admin@ngo.org"
+          },
+          "role": {
+            "type": "string",
+            "example": "admin"
+          },
+          "is_active": {
+            "type": "boolean",
+            "example": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "created_at",
+          "email",
+          "id",
+          "is_active",
+          "name",
+          "role",
+          "updated_at"
+        ],
+        "additionalProperties": false
+      },
+      "UserListOutSchema": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserOutSchema"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "example": 1
+          },
+          "per_page": {
+            "type": "integer",
+            "example": 20
+          },
+          "total": {
+            "type": "integer",
+            "example": 2
+          }
+        },
+        "required": [
+          "items",
+          "page",
+          "per_page",
+          "total"
+        ],
+        "additionalProperties": false
+      },
+      "UserOutSchema1": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "NGO Admin"
+          },
+          "email": {
+            "type": "string",
+            "example": "admin@ngo.org"
+          },
+          "role": {
+            "type": "string",
+            "example": "admin"
+          },
+          "is_active": {
+            "type": "boolean",
+            "example": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "created_at",
+          "email",
+          "id",
+          "is_active",
+          "name",
+          "role",
+          "updated_at"
+        ],
+        "additionalProperties": false
+      },
+      "UserCreateInSchema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "description": "Full name of the user",
+            "example": "Aarav Sharma"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 120,
+            "description": "Unique email address",
+            "example": "aarav@ngo.org"
+          },
+          "password": {
+            "type": "string",
+            "writeOnly": true,
+            "minLength": 8,
+            "maxLength": 128,
+            "description": "Account password (8-128 characters)",
+            "example": "SecurePass123!"
+          },
+          "role": {
+            "type": "string",
+            "default": "volunteer",
+            "enum": [
+              "admin",
+              "volunteer"
+            ],
+            "description": "User permission role",
+            "example": "volunteer"
+          },
+          "is_active": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether the account is active",
+            "example": true
+          }
+        },
+        "required": [
+          "email",
+          "name",
+          "password"
+        ],
+        "additionalProperties": false
+      },
+      "AreaOutSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Central Zone - Ward 1"
+          },
+          "short_code": {
+            "type": "string",
+            "example": "CTR"
+          },
+          "ward_no": {
+            "type": "string",
+            "example": "Ward 1"
+          },
+          "color_name": {
+            "type": "string",
+            "example": "Teal"
+          },
+          "color_hex": {
+            "type": "string",
+            "example": "#0D9488"
+          },
+          "landmark": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "Near Municipal Clock Tower"
+          },
+          "animal_lover_name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "Sunita Sharma"
+          },
+          "animal_lover_phone": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "+91-98765-43210"
+          },
+          "last_dog_number": {
+            "type": "integer",
+            "example": 0
+          },
+          "is_active": {
+            "type": "boolean",
+            "example": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "color_hex",
+          "color_name",
+          "created_at",
+          "id",
+          "is_active",
+          "last_dog_number",
+          "name",
+          "short_code",
+          "updated_at",
+          "ward_no"
+        ],
+        "additionalProperties": false
+      },
+      "AreaListOutSchema": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AreaOutSchema"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "example": 1
+          },
+          "per_page": {
+            "type": "integer",
+            "example": 20
+          },
+          "total": {
+            "type": "integer",
+            "example": 3
+          }
+        },
+        "required": [
+          "items",
+          "page",
+          "per_page",
+          "total"
+        ],
+        "additionalProperties": false
+      },
+      "AreaOutSchema1": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Central Zone - Ward 1"
+          },
+          "short_code": {
+            "type": "string",
+            "example": "CTR"
+          },
+          "ward_no": {
+            "type": "string",
+            "example": "Ward 1"
+          },
+          "color_name": {
+            "type": "string",
+            "example": "Teal"
+          },
+          "color_hex": {
+            "type": "string",
+            "example": "#0D9488"
+          },
+          "landmark": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "Near Municipal Clock Tower"
+          },
+          "animal_lover_name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "Sunita Sharma"
+          },
+          "animal_lover_phone": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "+91-98765-43210"
+          },
+          "last_dog_number": {
+            "type": "integer",
+            "example": 0
+          },
+          "is_active": {
+            "type": "boolean",
+            "example": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "color_hex",
+          "color_name",
+          "created_at",
+          "id",
+          "is_active",
+          "last_dog_number",
+          "name",
+          "short_code",
+          "updated_at",
+          "ward_no"
+        ],
+        "additionalProperties": false
+      },
+      "AreaCreateInSchema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120,
+            "description": "Full name of the area",
+            "example": "West Suburb - Ward 4"
+          },
+          "short_code": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 10,
+            "description": "Short code used in dog codes (max 10 chars)",
+            "example": "WST"
+          },
+          "ward_no": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 20,
+            "description": "Municipal ward number/identifier",
+            "example": "Ward 4"
+          },
+          "color_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 30,
+            "description": "Human-readable color description",
+            "example": "Emerald"
+          },
+          "color_hex": {
+            "type": "string",
+            "pattern": "^#[0-9A-Fa-f]{6}$",
+            "description": "Unique color hex code in format #RRGGBB",
+            "example": "#10B981"
+          },
+          "landmark": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 200,
+            "description": "Key landmark in this area",
+            "example": "Near West Gate Bus Stop"
+          },
+          "animal_lover_name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 100,
+            "description": "Local volunteer or feeder contact name",
+            "example": "Deepak Mehta"
+          },
+          "animal_lover_phone": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 20,
+            "description": "Feeder contact phone number",
+            "example": "+91-98765-43213"
+          }
+        },
+        "required": [
+          "color_hex",
+          "color_name",
+          "name",
+          "short_code",
+          "ward_no"
+        ],
+        "additionalProperties": false
+      },
+      "HealthOutSchema": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "ok"
+          },
+          "service": {
+            "type": "string",
+            "example": "dog-sterilization-api"
+          },
+          "database": {
+            "type": "string",
+            "example": "connected"
+          }
+        },
+        "required": [
+          "service",
+          "status"
+        ],
+        "additionalProperties": false
+      },
+      "UserMeOutSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "NGO Admin"
+          },
+          "email": {
+            "type": "string",
+            "example": "admin@ngo.org"
+          },
+          "role": {
+            "type": "string",
+            "example": "admin"
+          },
+          "is_active": {
+            "type": "boolean",
+            "example": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "created_at",
+          "email",
+          "id",
+          "is_active",
+          "name",
+          "role"
+        ],
+        "additionalProperties": false
+      },
+      "LoginOutSchema": {
+        "type": "object",
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "description": "JWT bearer token"
+          },
+          "token_type": {
+            "type": "string",
+            "example": "bearer"
+          },
+          "user": {
+            "$ref": "#/components/schemas/UserMeOutSchema"
+          }
+        },
+        "required": [
+          "access_token",
+          "token_type",
+          "user"
+        ],
+        "additionalProperties": false
+      },
+      "LoginInSchema": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "User email address",
+            "example": "admin@ngo.org"
+          },
+          "password": {
+            "type": "string",
+            "writeOnly": true,
+            "description": "User account password",
+            "example": "change-me-admin-password"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ],
+        "additionalProperties": false
+      },
+      "AuditLogOutSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "user_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "user_name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "NGO Admin"
+          },
+          "action": {
+            "type": "string",
+            "example": "create"
+          },
+          "table_name": {
+            "type": "string",
+            "example": "dogs"
+          },
+          "record_id": {
+            "type": "integer"
+          },
+          "changes": {},
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "action",
+          "created_at",
+          "id",
+          "record_id",
+          "table_name"
+        ],
+        "additionalProperties": false
+      },
+      "AuditLogListOutSchema": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditLogOutSchema"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "example": 1
+          },
+          "per_page": {
+            "type": "integer",
+            "example": 20
+          },
+          "total": {
+            "type": "integer",
+            "example": 10
+          }
+        },
+        "required": [
+          "items",
+          "page",
+          "per_page",
+          "total"
+        ],
+        "additionalProperties": false
+      },
+      "AreaDogCountSchema": {
+        "type": "object",
+        "properties": {
+          "area_id": {
+            "type": "integer",
+            "example": 1
+          },
+          "area_name": {
+            "type": "string",
+            "example": "Central Zone - Ward 1"
+          },
+          "short_code": {
+            "type": "string",
+            "example": "CTR"
+          },
+          "color_hex": {
+            "type": "string",
+            "example": "#0D9488"
+          },
+          "count": {
+            "type": "integer",
+            "example": 12
+          }
+        },
+        "required": [
+          "area_id",
+          "area_name",
+          "color_hex",
+          "count",
+          "short_code"
+        ],
+        "additionalProperties": false
+      },
+      "VaccinationDueCountsSchema": {
+        "type": "object",
+        "properties": {
+          "overdue": {
+            "type": "integer",
+            "example": 3
+          },
+          "upcoming_30_days": {
+            "type": "integer",
+            "example": 5
+          }
+        },
+        "required": [
+          "overdue",
+          "upcoming_30_days"
+        ],
+        "additionalProperties": false
+      },
+      "DashboardStatsOutSchema": {
+        "type": "object",
+        "properties": {
+          "total_dogs": {
+            "type": "integer",
+            "example": 45
+          },
+          "by_status": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer"
+            }
+          },
+          "by_area": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AreaDogCountSchema"
+            }
+          },
+          "sterilized_this_month": {
+            "type": "integer",
+            "example": 14
+          },
+          "vaccinations_due": {
+            "$ref": "#/components/schemas/VaccinationDueCountsSchema"
+          }
+        },
+        "required": [
+          "by_area",
+          "by_status",
+          "sterilized_this_month",
+          "total_dogs",
+          "vaccinations_due"
+        ],
+        "additionalProperties": false
+      },
+      "DueVaccinationItemSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "dog_id": {
+            "type": "integer"
+          },
+          "dog_code": {
+            "type": "string",
+            "example": "CTR-0001"
+          },
+          "area_name": {
+            "type": "string",
+            "example": "Central Zone - Ward 1"
+          },
+          "area_color_hex": {
+            "type": "string",
+            "example": "#0D9488"
+          },
+          "case_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "vaccine_name": {
+            "type": "string",
+            "example": "Anti-Rabies"
+          },
+          "date_given": {
+            "type": "string",
+            "format": "date"
+          },
+          "next_due_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "days_until_due": {
+            "type": "integer",
+            "description": "Negative if overdue, 0+ if upcoming"
+          },
+          "given_by": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "area_color_hex",
+          "area_name",
+          "date_given",
+          "days_until_due",
+          "dog_code",
+          "dog_id",
+          "id",
+          "next_due_date",
+          "vaccine_name"
+        ],
+        "additionalProperties": false
+      },
+      "DueVaccinationsOutSchema": {
+        "type": "object",
+        "properties": {
+          "days": {
+            "type": "integer",
+            "example": 30
+          },
+          "as_of": {
+            "type": "string",
+            "format": "date"
+          },
+          "overdue": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DueVaccinationItemSchema"
+            }
+          },
+          "upcoming": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DueVaccinationItemSchema"
+            }
+          }
+        },
+        "required": [
+          "as_of",
+          "days",
+          "overdue",
+          "upcoming"
+        ],
+        "additionalProperties": false
+      },
+      "DogUpdateInSchema": {
+        "type": "object",
+        "properties": {
+          "sex": {
+            "type": "string",
+            "enum": [
+              "male",
+              "female",
+              "unknown"
+            ]
+          },
+          "approx_age": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 30
+          },
+          "age_group": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "puppy",
+              "young",
+              "adult",
+              "senior",
+              null
+            ]
+          },
+          "coat_description": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 200
+          },
+          "weight_kg": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0.0,
+            "maximum": 150.0
+          },
+          "body_condition": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "underweight",
+              "normal",
+              "overweight",
+              null
+            ]
+          },
+          "is_pregnant": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "temperament": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "guardian_name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 100
+          },
+          "guardian_phone": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 20
+          },
+          "capture_address": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "landmark": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 200
+          },
+          "latitude": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": -90.0,
+            "maximum": 90.0
+          },
+          "longitude": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": -180.0,
+            "maximum": 180.0
+          },
+          "ear_notch_done": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "registered",
+              "picked_up",
+              "in_surgery",
+              "recovering",
+              "released",
+              "deceased",
+              "lost"
+            ]
+          },
+          "medical_conditions": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "medical_history": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "DogMessageOutSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Dog deleted successfully"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "additionalProperties": false
+      },
+      "UserUpdateInSchema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "description": "Updated name of the user",
+            "example": "Aarav K. Sharma"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "admin",
+              "volunteer"
+            ],
+            "description": "Updated permission role",
+            "example": "admin"
+          },
+          "is_active": {
+            "type": "boolean",
+            "description": "Updated account active status",
+            "example": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "AreaUpdateInSchema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120,
+            "description": "Updated area name",
+            "example": "West Suburb Extension"
+          },
+          "short_code": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 10,
+            "description": "Updated short code",
+            "example": "WSX"
+          },
+          "ward_no": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 20,
+            "description": "Updated ward number",
+            "example": "Ward 4A"
+          },
+          "color_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 30,
+            "description": "Updated color name",
+            "example": "Forest Green"
+          },
+          "color_hex": {
+            "type": "string",
+            "pattern": "^#[0-9A-Fa-f]{6}$",
+            "description": "Updated unique color hex code",
+            "example": "#059669"
+          },
+          "landmark": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 200,
+            "description": "Updated landmark",
+            "example": "Near Metro Station Pillar 12"
+          },
+          "animal_lover_name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 100,
+            "description": "Updated feeder contact name"
+          },
+          "animal_lover_phone": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 20,
+            "description": "Updated feeder contact phone"
+          },
+          "is_active": {
+            "type": "boolean",
+            "description": "Active status for dog assignments",
+            "example": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CaseOutSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "dog_id": {
+            "type": "integer",
+            "example": 1
+          },
+          "pickup_date": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-11-20"
+          },
+          "pickup_location": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "Clock Tower Gate"
+          },
+          "picked_by": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "NGO Volunteer"
+          },
+          "surgery_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "example": "2026-11-21"
+          },
+          "procedure": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "Ovariohysterectomy (Spay)"
+          },
+          "surgeon_name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "Dr. Meera Nair"
+          },
+          "surgery_outcome": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "success"
+          },
+          "complication_type": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "recovery_days": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "example": 4
+          },
+          "pre_op_notes": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "post_op_notes": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "prescription_details": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "complications": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "drop_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "example": "2026-11-25"
+          },
+          "drop_location": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "Clock Tower Gate"
+          },
+          "released_same_spot": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "example": true
+          },
+          "created_by": {
+            "type": "integer"
+          },
+          "updated_by": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "created_at",
+          "created_by",
+          "dog_id",
+          "id",
+          "pickup_date",
+          "updated_at"
+        ],
+        "additionalProperties": false
+      },
+      "CaseListOutSchema": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CaseOutSchema"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "example": 1
+          },
+          "per_page": {
+            "type": "integer",
+            "example": 20
+          },
+          "total": {
+            "type": "integer",
+            "example": 1
+          }
+        },
+        "required": [
+          "items",
+          "page",
+          "per_page",
+          "total"
+        ],
+        "additionalProperties": false
+      },
+      "CaseOutSchema1": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "dog_id": {
+            "type": "integer",
+            "example": 1
+          },
+          "pickup_date": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-11-20"
+          },
+          "pickup_location": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "Clock Tower Gate"
+          },
+          "picked_by": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "NGO Volunteer"
+          },
+          "surgery_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "example": "2026-11-21"
+          },
+          "procedure": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "Ovariohysterectomy (Spay)"
+          },
+          "surgeon_name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "Dr. Meera Nair"
+          },
+          "surgery_outcome": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "success"
+          },
+          "complication_type": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "recovery_days": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "example": 4
+          },
+          "pre_op_notes": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "post_op_notes": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "prescription_details": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "complications": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "drop_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "example": "2026-11-25"
+          },
+          "drop_location": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "Clock Tower Gate"
+          },
+          "released_same_spot": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "example": true
+          },
+          "created_by": {
+            "type": "integer"
+          },
+          "updated_by": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "created_at",
+          "created_by",
+          "dog_id",
+          "id",
+          "pickup_date",
+          "updated_at"
+        ],
+        "additionalProperties": false
+      },
+      "CaseCreateInSchema": {
+        "type": "object",
+        "properties": {
+          "pickup_date": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-11-20"
+          },
+          "pickup_location": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 200
+          },
+          "picked_by": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 100
+          },
+          "surgery_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "procedure": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 100
+          },
+          "surgeon_name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 100
+          },
+          "surgery_outcome": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "success",
+              "complication",
+              "death",
+              null
+            ]
+          },
+          "complication_type": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 100
+          },
+          "recovery_days": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 365
+          },
+          "pre_op_notes": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "post_op_notes": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "prescription_details": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "complications": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "drop_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "drop_location": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 200
+          },
+          "released_same_spot": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "pickup_date"
+        ],
+        "additionalProperties": false
+      },
+      "PhotoOutSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "dog_id": {
+            "type": "integer",
+            "example": 1
+          },
+          "case_id": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "example": 1
+          },
+          "storage_key": {
+            "type": "string",
+            "example": "dogs/1/abc123.webp"
+          },
+          "url": {
+            "readOnly": true,
+            "example": "http://localhost:5000/media/dogs/1/abc123.webp"
+          },
+          "photo_type": {
+            "type": "string",
+            "example": "intake"
+          },
+          "is_primary": {
+            "type": "boolean",
+            "example": true
+          },
+          "uploaded_by": {
+            "type": "integer"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "created_at",
+          "dog_id",
+          "id",
+          "is_primary",
+          "photo_type",
+          "storage_key",
+          "updated_at",
+          "uploaded_by",
+          "url"
+        ],
+        "additionalProperties": false
+      },
+      "PhotoListOutSchema": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PhotoOutSchema"
+            }
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "additionalProperties": false
+      },
+      "PhotoOutSchema1": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "dog_id": {
+            "type": "integer",
+            "example": 1
+          },
+          "case_id": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "example": 1
+          },
+          "storage_key": {
+            "type": "string",
+            "example": "dogs/1/abc123.webp"
+          },
+          "url": {
+            "readOnly": true,
+            "example": "http://localhost:5000/media/dogs/1/abc123.webp"
+          },
+          "photo_type": {
+            "type": "string",
+            "example": "intake"
+          },
+          "is_primary": {
+            "type": "boolean",
+            "example": true
+          },
+          "uploaded_by": {
+            "type": "integer"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "created_at",
+          "dog_id",
+          "id",
+          "is_primary",
+          "photo_type",
+          "storage_key",
+          "updated_at",
+          "uploaded_by",
+          "url"
+        ],
+        "additionalProperties": false
+      },
+      "PhotoUploadInSchema": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "description": "JPEG, PNG, or WebP image file (max 10 MB)",
+            "type": "string",
+            "format": "binary"
+          },
+          "photo_type": {
+            "type": "string",
+            "default": "intake",
+            "enum": [
+              "intake",
+              "post_surgery",
+              "release",
+              "other"
+            ],
+            "description": "Stage when photo was taken",
+            "example": "intake"
+          },
+          "case_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "is_primary": {
+            "type": "boolean",
+            "default": false,
+            "description": "Set as primary profile photo",
+            "example": false
+          }
+        },
+        "required": [
+          "file"
+        ],
+        "additionalProperties": false
+      },
+      "VaccinationOutSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "dog_id": {
+            "type": "integer",
+            "example": 1
+          },
+          "case_id": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "example": 1
+          },
+          "vaccine_name": {
+            "type": "string",
+            "example": "Anti-Rabies"
+          },
+          "date_given": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-11-01"
+          },
+          "batch_no": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "ARV-2026-09"
+          },
+          "next_due_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "example": "2027-11-01"
+          },
+          "given_by": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "Dr. Meera Nair"
+          },
+          "notes": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "created_by": {
+            "type": "integer"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "created_at",
+          "created_by",
+          "date_given",
+          "dog_id",
+          "id",
+          "updated_at",
+          "vaccine_name"
+        ],
+        "additionalProperties": false
+      },
+      "VaccinationListOutSchema": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VaccinationOutSchema"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "example": 1
+          },
+          "per_page": {
+            "type": "integer",
+            "example": 20
+          },
+          "total": {
+            "type": "integer",
+            "example": 1
+          }
+        },
+        "required": [
+          "items",
+          "page",
+          "per_page",
+          "total"
+        ],
+        "additionalProperties": false
+      },
+      "VaccinationOutSchema1": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "dog_id": {
+            "type": "integer",
+            "example": 1
+          },
+          "case_id": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "example": 1
+          },
+          "vaccine_name": {
+            "type": "string",
+            "example": "Anti-Rabies"
+          },
+          "date_given": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-11-01"
+          },
+          "batch_no": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "ARV-2026-09"
+          },
+          "next_due_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "example": "2027-11-01"
+          },
+          "given_by": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "Dr. Meera Nair"
+          },
+          "notes": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "created_by": {
+            "type": "integer"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "created_at",
+          "created_by",
+          "date_given",
+          "dog_id",
+          "id",
+          "updated_at",
+          "vaccine_name"
+        ],
+        "additionalProperties": false
+      },
+      "VaccinationCreateInSchema": {
+        "type": "object",
+        "properties": {
+          "vaccine_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "example": "Anti-Rabies"
+          },
+          "date_given": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-11-01"
+          },
+          "case_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "batch_no": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 50
+          },
+          "next_due_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "given_by": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 100
+          },
+          "notes": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "date_given",
+          "vaccine_name"
+        ],
+        "additionalProperties": false
+      },
+      "PublicVaccinationSchema": {
+        "type": "object",
+        "properties": {
+          "vaccine_name": {
+            "type": "string",
+            "example": "Anti-Rabies"
+          },
+          "date_given": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-11-20"
+          }
+        },
+        "required": [
+          "date_given",
+          "vaccine_name"
+        ],
+        "additionalProperties": false
+      },
+      "PublicDogOutSchema": {
+        "type": "object",
+        "properties": {
+          "dog_code": {
+            "type": "string",
+            "example": "CTR-0001"
+          },
+          "area_name": {
+            "type": "string",
+            "example": "Central Zone - Ward 1"
+          },
+          "area_color_name": {
+            "type": "string",
+            "example": "Teal"
+          },
+          "area_color_hex": {
+            "type": "string",
+            "example": "#0D9488"
+          },
+          "primary_photo_url": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "sterilized": {
+            "type": "boolean",
+            "example": true
+          },
+          "latest_vaccination": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PublicVaccinationSchema"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "ngo_contact": {
+            "type": "string",
+            "example": "Animal Welfare NGO Helpline: +91-00000-00000"
+          }
+        },
+        "required": [
+          "area_color_hex",
+          "area_color_name",
+          "area_name",
+          "dog_code",
+          "ngo_contact",
+          "sterilized"
+        ],
+        "additionalProperties": false
+      },
+      "UserMessageOutSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Password reset successfully"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "additionalProperties": false
+      },
+      "UserResetPasswordInSchema": {
+        "type": "object",
+        "properties": {
+          "new_password": {
+            "type": "string",
+            "writeOnly": true,
+            "minLength": 8,
+            "maxLength": 128,
+            "description": "New account password (8-128 characters)",
+            "example": "NewSecurePass123!"
+          }
+        },
+        "required": [
+          "new_password"
+        ],
+        "additionalProperties": false
+      },
+      "CaseUpdateInSchema": {
+        "type": "object",
+        "properties": {
+          "pickup_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "pickup_location": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 200
+          },
+          "picked_by": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 100
+          },
+          "surgery_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "procedure": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 100
+          },
+          "surgeon_name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 100
+          },
+          "surgery_outcome": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "success",
+              "complication",
+              "death",
+              null
+            ]
+          },
+          "complication_type": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 100
+          },
+          "recovery_days": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 365
+          },
+          "pre_op_notes": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "post_op_notes": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "prescription_details": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "complications": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "drop_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "drop_location": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 200
+          },
+          "released_same_spot": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "CaseMessageOutSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Case deleted successfully"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "additionalProperties": false
+      },
+      "PhotoUpdateInSchema": {
+        "type": "object",
+        "properties": {
+          "photo_type": {
+            "type": "string",
+            "enum": [
+              "intake",
+              "post_surgery",
+              "release",
+              "other"
+            ]
+          },
+          "is_primary": {
+            "type": "boolean"
+          },
+          "case_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "PhotoMessageOutSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Photo deleted successfully"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "additionalProperties": false
+      },
+      "VaccinationUpdateInSchema": {
+        "type": "object",
+        "properties": {
+          "vaccine_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "date_given": {
+            "type": "string",
+            "format": "date"
+          },
+          "case_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "batch_no": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 50
+          },
+          "next_due_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "given_by": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 100
+          },
+          "notes": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "VaccinationMessageOutSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Vaccination deleted successfully"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

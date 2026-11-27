@@ -57,11 +57,5 @@ class Case(db.Model, TimestampMixin, SoftDeleteMixin):
     creator = db.relationship("User", foreign_keys=[created_by], backref="cases_created")
     updater = db.relationship("User", foreign_keys=[updated_by], backref="cases_updated")
 
-    __table_args__ = (
-        Index("ix_cases_pickup_date", "pickup_date"),
-        Index("ix_cases_surgery_date", "surgery_date"),
-        Index("ix_cases_drop_date", "drop_date"),
-    )
-
     def __repr__(self) -> str:
         return f"<Case id={self.id} dog_id={self.dog_id} pickup='{self.pickup_date}'>"

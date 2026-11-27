@@ -69,3 +69,31 @@ def test_me_with_token(client):
     data = response.get_json()
     assert data["email"] == email
     assert data["role"] == "volunteer"
+
+
+def test_login_inactive_user(app, client):
+    """Inactive user login must return 403 ACCOUNT_INACTIVE."""
+    with app.app_context():
+        inactive = User(
+            name="Inactive Staff",
+            email="inactive_test@ngo.org",
+            password_hash=generate_password_hash("Pass12345!"),
+            role="volunteer",
+            is_active=False,
+        )
+        db.session.add(inactive)
+        db.session.commit()
+
+    res = client.post(
+        "/api/auth/login",
+        json={"email": "inactive_test@ngo.org", "password": "Pass12345!"},
+    )
+    assert res.status_code == 403
+    assert res.get_json()["error"]["code"] == "ACCOUNT_INACTIVE"
+
+
+def test_me_invalid_token(client):
+    """Malformed JWT returns 401 UNAUTHORIZED."""
+    res = client.get("/api/auth/me", headers={"Authorization": "Bearer not.a.jwt"})
+    assert res.status_code == 401
+    assert res.get_json()["error"]["code"] == "UNAUTHORIZED"

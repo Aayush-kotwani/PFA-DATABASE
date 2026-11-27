@@ -28,10 +28,6 @@ class Vaccination(db.Model, TimestampMixin, SoftDeleteMixin):
     case = db.relationship("Case", back_populates="vaccinations")
     creator = db.relationship("User", foreign_keys=[created_by], backref="vaccinations_created")
 
-    __table_args__ = (
-        Index("ix_vaccinations_next_due_date", "next_due_date"),
-    )
-
     def __repr__(self) -> str:
         return (
             f"<Vaccination id={self.id} dog_id={self.dog_id} "

@@ -55,6 +55,19 @@ class Config:
     R2_SECRET_ACCESS_KEY = os.getenv("R2_SECRET_ACCESS_KEY", "")
     R2_PRESIGNED_URL_EXPIRY = int(os.getenv("R2_PRESIGNED_URL_EXPIRY", "3600"))
 
+
+class TestingConfig(Config):
+    """Isolated in-memory SQLite configuration for automated pytest runs."""
+
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
+    SQLALCHEMY_ENGINE_OPTIONS = {}
+    STORAGE_BACKEND = "local"
+    SECRET_KEY = "test-secret-key-at-least-32-bytes-long"
+    JWT_SECRET_KEY = "test-jwt-secret-key-at-least-32-bytes-long"
+    PUBLIC_BASE_URL = "http://localhost:5000"
+    NGO_CONTACT_TEXT = "Test NGO Helpline: +91-00000-00000"
+
     PUBLIC_BASE_URL = os.getenv("PUBLIC_BASE_URL", "http://localhost:5000").rstrip("/")
     NGO_CONTACT_TEXT = os.getenv(
         "NGO_CONTACT_TEXT", "Animal Welfare NGO Helpline"

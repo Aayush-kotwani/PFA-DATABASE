@@ -1,6 +1,6 @@
 # Project Execution Status
 
-- **Current Step**: B9 (Completed - Dashboard stats, Audit logs, Excel export, Analytics flat export, and read-only SQL guide verified)
+- **Current Step**: B10 (Completed - Backend API & Database 100% Complete!)
 - **Steps Completed**:
   - A1: Project folder structure, .gitignore, Git initialization, remote connection, PROJECT_CONTEXT.md, and STATUS.md.
   - A2: Virtual environment, requirements.txt, APIFlask app factory, .env config (.env.example), CORS, run.py, and GET /api/health endpoint.
@@ -18,5 +18,6 @@
   - B7b: Cloudflare R2 Storage (Private bucket dog-sterilization-media-dev, R2Storage with boto3 s3v4 presigned URLs, STORAGE_BACKEND=r2 switch, live upload & privacy verification).
   - B8: QR Code & Public Verification (Staff-only GET /api/dogs/<id>/qr.png encoding <PUBLIC_BASE_URL>/d/<public_token>, and unauthenticated GET /api/public/dogs/<public_token> returning strictly allow-listed fields with zero PII/medical/GPS).
   - B9: Reporting & Analytics (GET /api/dashboard/stats for staff; Admin-only GET /api/audit-logs with filters, GET /api/export/excel 3-sheet .xlsx, GET /api/analytics/export flat CSV/JSON with PII excluded by default, and backend/scripts/readonly_analytics_user.sql).
-- **Next Step**: B10 (Hardening, index checks, backend/README.md, OpenAPI export, and final checklist)
+  - B10: Hardening & Documentation (Isolated SQLite TestingConfig, 33 passing pytest tests across auth/RBAC/privacy/public/CRUD, live Neon index verification, backend/README.md, and backend/openapi.json export).
+- **Next Step**: Frontend (Vue 3) or Production Deployment (Render + prod Neon DB + prod R2 bucket)
 - **Known Issues**: None
