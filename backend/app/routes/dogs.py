@@ -1,6 +1,7 @@
 """Dogs management API routes."""
 
 from apiflask import APIBlueprint
+from flask import Response
 
 from app.schemas.dog import (
     DogCreateInSchema,
@@ -10,7 +11,7 @@ from app.schemas.dog import (
     DogOutSchema,
     DogUpdateInSchema,
 )
-from app.services import dog_service
+from app.services import dog_service, public_service
 from app.utils.auth import get_current_user, login_required, roles_required
 
 dogs_bp = APIBlueprint("dogs", __name__, url_prefix="/api/dogs", tag="Dogs")
@@ -86,3 +87,27 @@ def delete_dog(dog_id):
     """Soft-delete a dog."""
     current_user = get_current_user()
     return dog_service.delete_dog(dog_id, actor=current_user)
+
+
+@dogs_bp.get("/<int:dog_id>/qr.png")
+@dogs_bp.doc(
+    summary="Download dog QR code PNG",
+    description="Generate a QR code PNG encoding the public dog verification URL.",
+    security="BearerAuth",
+    responses={
+        200: {
+            "description": "QR Code PNG image",
+            "content": {"image/png": {}},
+        }
+    },
+)
+@login_required
+def get_dog_qr_png(dog_id):
+    """Return a PNG QR code for the dog's public info URL."""
+    png_bytes, dog_code = public_service.generate_dog_qr_png(dog_id)
+    return Response(
+        png_bytes,
+        status=200,
+        mimetype="image/png",
+        headers={"Content-Disposition": f'inline; filename="{dog_code}.png"'},
+    )

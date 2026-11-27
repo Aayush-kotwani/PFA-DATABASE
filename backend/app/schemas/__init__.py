@@ -31,6 +31,7 @@ from app.schemas.photo import (
     PhotoUpdateInSchema,
     PhotoUploadInSchema,
 )
+from app.schemas.public import PublicDogOutSchema, PublicVaccinationSchema
 from app.schemas.user import (
     UserCreateInSchema,
     UserListOutSchema,
@@ -90,4 +91,6 @@ __all__ = [
     "PhotoUploadInSchema",
     "PhotoUpdateInSchema",
     "PhotoMessageOutSchema",
+    "PublicVaccinationSchema",
+    "PublicDogOutSchema",
 ]

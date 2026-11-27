@@ -29,6 +29,7 @@ from app.services.photo_service import (
     update_photo,
     upload_photo,
 )
+from app.services.public_service import generate_dog_qr_png, get_public_dog_info
 from app.services.user_service import (
     create_user,
     list_users,
@@ -76,4 +77,6 @@ __all__ = [
     "upload_photo",
     "update_photo",
     "soft_delete_photo",
+    "generate_dog_qr_png",
+    "get_public_dog_info",
 ]
