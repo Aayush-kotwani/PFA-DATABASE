@@ -1,8 +1,9 @@
 """Dogs management API routes."""
 
 from apiflask import APIBlueprint
-from flask import Response
+from flask import Response, current_app
 
+from app.extensions import limiter
 from app.schemas.dog import (
     DogCreateInSchema,
     DogListOutSchema,
@@ -13,6 +14,7 @@ from app.schemas.dog import (
 )
 from app.services import dog_service, public_service
 from app.utils.auth import get_current_user, login_required, roles_required
+from app.utils.rate_limit import get_user_or_ip_key
 
 dogs_bp = APIBlueprint("dogs", __name__, url_prefix="/api/dogs", tag="Dogs")
 
@@ -90,6 +92,7 @@ def delete_dog(dog_id):
 
 
 @dogs_bp.get("/<int:dog_id>/qr.png")
+@limiter.limit(lambda: current_app.config["RATELIMIT_QR"], key_func=get_user_or_ip_key)
 @dogs_bp.doc(
     summary="Download dog QR code PNG",
     description="Generate a QR code PNG encoding the public dog verification URL.",

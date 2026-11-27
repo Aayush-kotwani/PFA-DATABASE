@@ -3,6 +3,7 @@
 from typing import Any
 import uuid
 
+from flask import current_app
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.extensions import db
@@ -84,6 +85,15 @@ def upload_photo(
 ) -> DogPhoto:
     """Validate, process to WebP, store, and record a dog photo."""
     _get_active_dog(dog_id)
+    max_photos = int(current_app.config.get("MAX_PHOTOS_PER_DOG", 15))
+    active_count = DogPhoto.query.filter_by(dog_id=dog_id, is_deleted=False).count()
+    if active_count >= max_photos:
+        raise APIError(
+            409,
+            "PHOTO_LIMIT_REACHED",
+            f"Maximum of {max_photos} active photos per dog reached",
+        )
+
     case_id = meta.get("case_id")
     _validate_case_link(dog_id, case_id)
 

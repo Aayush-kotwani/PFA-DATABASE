@@ -2,7 +2,7 @@
 
 from functools import wraps
 from flask import g
-from flask_jwt_extended import get_jwt_identity, verify_jwt_in_request
+from flask_jwt_extended import get_jwt, get_jwt_identity, verify_jwt_in_request
 
 from app.extensions import db
 from app.models.user import User
@@ -30,6 +30,10 @@ def login_required(fn):
             raise APIError(401, "UNAUTHORIZED", "User does not exist")
         if not user.is_active:
             raise APIError(403, "ACCOUNT_INACTIVE", "User account is inactive")
+
+        claims = get_jwt()
+        if claims.get("token_version") != user.token_version:
+            raise APIError(401, "UNAUTHORIZED", "Token has been revoked")
 
         g.current_user = user
         return fn(*args, **kwargs)

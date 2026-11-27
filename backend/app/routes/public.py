@@ -1,7 +1,10 @@
 """Unauthenticated public dog verification routes."""
 
 from apiflask import APIBlueprint
+from flask import current_app
+from flask_limiter.util import get_remote_address
 
+from app.extensions import limiter
 from app.schemas.public import PublicDogOutSchema
 from app.services import public_service
 
@@ -9,6 +12,7 @@ public_bp = APIBlueprint("public", __name__, url_prefix="/api/public", tag="Publ
 
 
 @public_bp.get("/dogs/<string:public_token>")
+@limiter.limit(lambda: current_app.config["RATELIMIT_PUBLIC_DOG"], key_func=get_remote_address)
 @public_bp.output(PublicDogOutSchema, status_code=200)
 @public_bp.doc(
     summary="Get public dog verification info",

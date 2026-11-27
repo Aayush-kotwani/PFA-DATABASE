@@ -61,6 +61,7 @@ def test_dashboard_audit_excel_and_analytics_exports(app, client):
                 "guardian_name": "Priya Nair",
                 "guardian_phone": "+91-98111-22334",
                 "capture_address": "15 Park Street",
+                "landmark": "=1+1",
                 "latitude": 19.076,
                 "longitude": 72.8777,
             },
@@ -134,12 +135,14 @@ def test_dashboard_audit_excel_and_analytics_exports(app, client):
         dogs_rows = list(wb["Dogs"].iter_rows(values_only=True))
         assert "Guardian Phone" in dogs_rows[0]
         phone_idx = dogs_rows[0].index("Guardian Phone")
+        landmark_idx = dogs_rows[0].index("Landmark")
         code_idx = dogs_rows[0].index("Dog Code")
         matching_dog_rows = [r for r in dogs_rows[1:] if r[code_idx] == dog_code]
         assert len(matching_dog_rows) == 1
-        assert matching_dog_rows[0][phone_idx] == "+91-98111-22334"
+        assert matching_dog_rows[0][phone_idx] == "'+91-98111-22334"
+        assert matching_dog_rows[0][landmark_idx] == "'=1+1"
 
-        # 5. Analytics flat export - JSON default (include_personal=False)
+        # 5. Analytics flat export - JSON default (include_personal=False, raw un-prefixed strings)
         an_json = client.get("/api/analytics/export?format=json", headers=adm_headers)
         assert an_json.status_code == 200
         an_data = an_json.get_json()
@@ -147,6 +150,7 @@ def test_dashboard_audit_excel_and_analytics_exports(app, client):
         row = next(item for item in an_data["items"] if item["dog_id"] == dog_id)
         assert row["sterilized"] is True
         assert row["vaccination_count"] == 1
+        assert row["landmark"] == "=1+1"
         for pii_field in (
             "guardian_name",
             "guardian_phone",
@@ -157,14 +161,16 @@ def test_dashboard_audit_excel_and_analytics_exports(app, client):
         ):
             assert pii_field not in row
 
-        # 6. Analytics flat export - CSV default (include_personal=False)
+        # 6. Analytics flat export - CSV default (include_personal=False, formula-sanitized)
         an_csv = client.get("/api/analytics/export?format=csv", headers=adm_headers)
         assert an_csv.status_code == 200
         assert "text/csv" in an_csv.mimetype
         reader = csv.DictReader(StringIO(an_csv.data.decode("utf-8")))
         assert "guardian_phone" not in (reader.fieldnames or [])
         csv_rows = list(reader)
-        assert any(r["dog_code"] == dog_code and r["vaccination_count"] == "1" for r in csv_rows)
+        csv_row = next(r for r in csv_rows if r["dog_code"] == dog_code)
+        assert csv_row["vaccination_count"] == "1"
+        assert csv_row["landmark"] == "'=1+1"
 
         # 7. Analytics flat export - JSON with include_personal=true
         an_priv = client.get(

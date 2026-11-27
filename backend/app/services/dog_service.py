@@ -15,6 +15,7 @@ from app.models.dog import Dog
 from app.models.user import User
 from app.services.audit_service import log_audit
 from app.utils.errors import APIError
+from app.utils.search import escape_like
 from app.utils.pagination import paginate_query
 
 
@@ -29,12 +30,13 @@ def list_dogs(filters: dict[str, Any]) -> dict[str, Any]:
 
     search = filters.get("search")
     if search and search.strip():
-        term = f"%{search.strip()}%"
+        escaped = escape_like(search.strip())
+        term = f"%{escaped}%"
         query = query.filter(
             or_(
-                Dog.dog_code.ilike(term),
-                Dog.guardian_name.ilike(term),
-                Dog.landmark.ilike(term),
+                Dog.dog_code.ilike(term, escape="\\"),
+                Dog.guardian_name.ilike(term, escape="\\"),
+                Dog.landmark.ilike(term, escape="\\"),
             )
         )
 
@@ -204,4 +206,8 @@ def delete_dog(dog_id: int, actor: User) -> dict[str, str]:
         db.session.rollback()
         raise
 
+    import logging
+    logging.getLogger(__name__).info(
+        "Dog soft-deleted: actor_id=%s dog_id=%s", actor.id, dog.id
+    )
     return {"message": "Dog deleted successfully"}

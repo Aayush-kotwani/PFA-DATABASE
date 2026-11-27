@@ -1,15 +1,21 @@
 """Authentication API routes."""
 
 from apiflask import APIBlueprint
+from flask import current_app
+from flask_limiter.util import get_remote_address
 
+from app.extensions import limiter
 from app.schemas.auth import LoginInSchema, LoginOutSchema, UserMeOutSchema
 from app.services.auth_service import authenticate_user
 from app.utils.auth import get_current_user, login_required
+from app.utils.rate_limit import get_login_email_key
 
 auth_bp = APIBlueprint("auth", __name__, url_prefix="/api/auth", tag="Auth")
 
 
 @auth_bp.post("/login")
+@limiter.limit(lambda: current_app.config["RATELIMIT_LOGIN_IP"], key_func=get_remote_address)
+@limiter.limit(lambda: current_app.config["RATELIMIT_LOGIN_EMAIL"], key_func=get_login_email_key)
 @auth_bp.input(LoginInSchema)
 @auth_bp.output(LoginOutSchema, status_code=200)
 @auth_bp.doc(

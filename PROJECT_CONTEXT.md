@@ -83,7 +83,7 @@ A web-based management system for an animal welfare NGO in India that rescues, s
   - Soft-delete strategy across records to preserve historical and longitudinal analytical context.
   - Analytics-focused indexes on temporal queries: `dogs.created_at`, `cases.pickup_date`, `cases.surgery_date`, `cases.drop_date`.
 - **Tables**:
-  1. `users`: Authentication and role definitions (`admin`, `volunteer`).
+  1. `users`: Authentication and role definitions (`admin`, `volunteer`), plus `token_version` (integer, default 0) for JWT revocation.
   2. `areas`: Geographic operational zones with ward, unique color hex, and counter for dog code generation. (Uses `is_active`, no soft delete).
   3. `dogs`: Core animal profile, unique `dog_code`, unique `public_token`, GPS coordinates, sterilization status, guardian info, medical text. Analytics fields: `age_group` (Enum: puppy, young, adult, senior), `body_condition` (Enum: underweight, normal, overweight), `is_pregnant` (Boolean). [Soft Delete]
   4. `cases`: Individual pickup-to-release episodes, surgery details, prescription, surgeon name. Analytics fields: `surgery_outcome` (Enum: success, complication, death), `complication_type` (String 100), `recovery_days` (Integer). [Soft Delete]
@@ -143,16 +143,16 @@ pfa new db app/
 ---
 
 ## 8. Security Checklist
-- [ ] **SEC-01** *(High)*: Rate limiting (`Flask-Limiter`) on login, public, photo upload, export, and QR endpoints with 429 JSON + `Retry-After`.
-- [ ] **SEC-02** *(High)*: Formula/CSV injection sanitization for all text cells in Excel and CSV exports.
-- [ ] **SEC-03** *(Critical)*: Strict production secret enforcement (`SECRET_KEY`, `JWT_SECRET_KEY` >= 32 chars, no placeholders/insecure fallbacks).
-- [ ] **SEC-04** *(High)*: JWT token revocation via `token_version` claim incremented on password reset/change, role change, and deactivation.
-- [ ] **SEC-05** *(Medium)*: `ProxyFix` middleware configured from env so rate limits and logs use real client IPs behind Render/proxies.
-- [ ] **SEC-06** *(Medium)*: Security response headers (`X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`, `Cache-Control`, HSTS in production).
-- [ ] **SEC-07** *(Medium)*: Audit logging for every Excel and Analytics export (`action="export"`, format, dataset, user ID, row count, no PII).
-- [ ] **SEC-08** *(Low)*: Escape `%` and `_` wildcards in SQL `ILIKE` search queries.
-- [ ] **SEC-09** *(Medium)*: Image decompression-bomb protection (`Image.MAX_IMAGE_PIXELS` + `DecompressionBombError` -> 422) and per-dog active photo cap.
-- [ ] **SEC-10** *(Medium)*: Structured security logging (failed logins, sensitive admin actions, request ID, no secrets/stack traces in 500 responses).
+- [x] **SEC-01** *(High)*: Rate limiting (`Flask-Limiter`) on login, public, photo upload, export, and QR endpoints with 429 JSON + `Retry-After`.
+- [x] **SEC-02** *(High)*: Formula/CSV injection sanitization for all text cells in Excel and CSV exports.
+- [x] **SEC-03** *(Critical)*: Strict production secret enforcement (`SECRET_KEY`, `JWT_SECRET_KEY` >= 32 chars, no placeholders/insecure fallbacks).
+- [x] **SEC-04** *(High)*: JWT token revocation via `token_version` claim incremented on password reset/change, role change, and deactivation.
+- [x] **SEC-05** *(Medium)*: `ProxyFix` middleware configured from env so rate limits and logs use real client IPs behind Render/proxies.
+- [x] **SEC-06** *(Medium)*: Security response headers (`X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`, `Cache-Control`, HSTS in production).
+- [x] **SEC-07** *(Medium)*: Audit logging for every Excel and Analytics export (`action="export"`, format, dataset, user ID, row count, no PII).
+- [x] **SEC-08** *(Low)*: Escape `%` and `_` wildcards in SQL `ILIKE` search queries.
+- [x] **SEC-09** *(Medium)*: Image decompression-bomb protection (`Image.MAX_IMAGE_PIXELS` + `DecompressionBombError` -> 422) and per-dog active photo cap.
+- [x] **SEC-10** *(Medium)*: Structured security logging (failed logins, sensitive admin actions, request ID, no secrets/stack traces in 500 responses).
 - [ ] **SEC-11** *(Medium)*: `ENABLE_SWAGGER` toggle disabling `/docs` and `/openapi.json` when `FLASK_ENV=production` unless explicitly enabled.
 - [ ] **SEC-12** *(Low)*: Self-service password change (`POST /api/auth/change-password`) with rate limit, `token_version` bump, and audit log.
 - [ ] **SEC-13** *(Low)*: Admin-only public QR token rotation (`POST /api/dogs/{id}/rotate-token`) invalidating old QR links.

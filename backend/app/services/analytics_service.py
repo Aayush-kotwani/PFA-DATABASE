@@ -13,6 +13,7 @@ from app.extensions import db
 from app.models.case import Case
 from app.models.dog import Dog
 from app.models.vaccination import Vaccination
+from app.utils.export_sanitize import sanitize_export_cell
 
 BASE_COLUMNS = [
     "dog_id", "dog_code", "area_name", "area_short_code", "ward_no",
@@ -121,7 +122,7 @@ def build_analytics_rows(
 def stream_analytics_csv(
     columns: list[str], rows: list[dict[str, Any]]
 ) -> Generator[str, None, None]:
-    """Yield CSV header and rows incrementally for memory-efficient streaming."""
+    """Yield CSV header and formula-sanitized rows incrementally."""
     buf = StringIO()
     writer = csv.DictWriter(buf, fieldnames=columns)
     writer.writeheader()
@@ -130,5 +131,5 @@ def stream_analytics_csv(
     for row in rows:
         buf.seek(0)
         buf.truncate(0)
-        writer.writerow(row)
+        writer.writerow({k: sanitize_export_cell(v) for k, v in row.items()})
         yield buf.getvalue()

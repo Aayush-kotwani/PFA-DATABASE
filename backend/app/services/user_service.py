@@ -1,5 +1,6 @@
 """Business logic services for User management."""
 
+import logging
 from typing import Any
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.security import generate_password_hash
@@ -9,6 +10,8 @@ from app.models.user import User
 from app.services.audit_service import log_audit
 from app.utils.errors import APIError
 from app.utils.pagination import paginate_query
+
+logger = logging.getLogger(__name__)
 
 
 def list_users(page: int = 1, per_page: int = 20) -> dict[str, Any]:
@@ -49,6 +52,12 @@ def create_user(data: dict[str, Any], actor_id: int) -> User:
             },
         )
         db.session.commit()
+        logger.info(
+            "User created: actor_id=%s target_id=%s role=%s",
+            actor_id,
+            user.id,
+            user.role,
+        )
     except SQLAlchemyError:
         db.session.rollback()
         raise
@@ -77,6 +86,10 @@ def update_user(user_id: int, data: dict[str, Any], actor_id: int) -> User:
 
     if diff:
         try:
+            # Revoke existing tokens on role change or deactivation
+            if "role" in diff or ("is_active" in diff and user.is_active is False):
+                user.token_version += 1
+
             log_audit(
                 action="update",
                 table_name="users",
@@ -85,6 +98,13 @@ def update_user(user_id: int, data: dict[str, Any], actor_id: int) -> User:
                 changes=diff,
             )
             db.session.commit()
+            if "role" in diff or "is_active" in diff:
+                logger.warning(
+                    "User security attributes updated: actor_id=%s target_id=%s fields=%s",
+                    actor_id,
+                    user.id,
+                    sorted(diff.keys()),
+                )
         except SQLAlchemyError:
             db.session.rollback()
             raise
@@ -100,6 +120,7 @@ def reset_user_password(user_id: int, new_password: str, actor_id: int) -> dict[
 
     try:
         user.password_hash = generate_password_hash(new_password)
+        user.token_version += 1
         log_audit(
             action="update",
             table_name="users",
@@ -108,6 +129,11 @@ def reset_user_password(user_id: int, new_password: str, actor_id: int) -> dict[
             changes={"password_reset": True},
         )
         db.session.commit()
+        logger.warning(
+            "User password reset: actor_id=%s target_id=%s",
+            actor_id,
+            user.id,
+        )
     except SQLAlchemyError:
         db.session.rollback()
         raise
