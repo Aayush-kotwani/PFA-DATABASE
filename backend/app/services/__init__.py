@@ -1,5 +1,6 @@
 """Business logic services package."""
 
+from app.services.analytics_service import build_analytics_rows, stream_analytics_csv
 from app.services.area_service import (
     create_area,
     deactivate_area,
@@ -7,7 +8,7 @@ from app.services.area_service import (
     list_areas,
     update_area,
 )
-from app.services.audit_service import log_audit
+from app.services.audit_service import list_audit_logs, log_audit
 from app.services.auth_service import authenticate_user
 from app.services.case_service import (
     create_case,
@@ -16,6 +17,7 @@ from app.services.case_service import (
     soft_delete_case,
     update_case,
 )
+from app.services.dashboard_service import get_dashboard_stats
 from app.services.dog_service import (
     create_dog,
     delete_dog,
@@ -23,6 +25,7 @@ from app.services.dog_service import (
     list_dogs,
     update_dog,
 )
+from app.services.export_service import build_excel_export
 from app.services.photo_service import (
     list_photos,
     soft_delete_photo,
@@ -79,4 +82,9 @@ __all__ = [
     "soft_delete_photo",
     "generate_dog_qr_png",
     "get_public_dog_info",
+    "list_audit_logs",
+    "get_dashboard_stats",
+    "build_excel_export",
+    "build_analytics_rows",
+    "stream_analytics_csv",
 ]

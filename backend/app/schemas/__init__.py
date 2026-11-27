@@ -7,6 +7,11 @@ from app.schemas.area import (
     AreaOutSchema,
     AreaUpdateInSchema,
 )
+from app.schemas.audit_log import (
+    AuditLogListOutSchema,
+    AuditLogOutSchema,
+    AuditLogQuerySchema,
+)
 from app.schemas.auth import LoginInSchema, LoginOutSchema, UserMeOutSchema
 from app.schemas.case import (
     CaseCreateInSchema,
@@ -14,6 +19,11 @@ from app.schemas.case import (
     CaseMessageOutSchema,
     CaseOutSchema,
     CaseUpdateInSchema,
+)
+from app.schemas.dashboard import (
+    AreaDogCountSchema,
+    DashboardStatsOutSchema,
+    VaccinationDueCountsSchema,
 )
 from app.schemas.dog import (
     DogAreaSummarySchema,
@@ -24,6 +34,7 @@ from app.schemas.dog import (
     DogOutSchema,
     DogUpdateInSchema,
 )
+from app.schemas.export import AnalyticsExportQuerySchema
 from app.schemas.photo import (
     PhotoListOutSchema,
     PhotoMessageOutSchema,
@@ -93,4 +104,11 @@ __all__ = [
     "PhotoMessageOutSchema",
     "PublicVaccinationSchema",
     "PublicDogOutSchema",
+    "AuditLogQuerySchema",
+    "AuditLogOutSchema",
+    "AuditLogListOutSchema",
+    "AreaDogCountSchema",
+    "VaccinationDueCountsSchema",
+    "DashboardStatsOutSchema",
+    "AnalyticsExportQuerySchema",
 ]

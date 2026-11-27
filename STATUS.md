@@ -1,6 +1,6 @@
 # Project Execution Status
 
-- **Current Step**: B8 (Completed - QR code PNG generation and public unauthenticated dog endpoint verified)
+- **Current Step**: B9 (Completed - Dashboard stats, Audit logs, Excel export, Analytics flat export, and read-only SQL guide verified)
 - **Steps Completed**:
   - A1: Project folder structure, .gitignore, Git initialization, remote connection, PROJECT_CONTEXT.md, and STATUS.md.
   - A2: Virtual environment, requirements.txt, APIFlask app factory, .env config (.env.example), CORS, run.py, and GET /api/health endpoint.
@@ -17,5 +17,6 @@
   - B7: Photos & Storage Abstraction (StorageBackend + LocalStorage, Pillow EXIF rotation fix + metadata strip + max 1200px resize + WebP conversion, /media/<key> dev route, /api/dogs/<dog_id>/photos CRUD with single primary photo enforcement).
   - B7b: Cloudflare R2 Storage (Private bucket dog-sterilization-media-dev, R2Storage with boto3 s3v4 presigned URLs, STORAGE_BACKEND=r2 switch, live upload & privacy verification).
   - B8: QR Code & Public Verification (Staff-only GET /api/dogs/<id>/qr.png encoding <PUBLIC_BASE_URL>/d/<public_token>, and unauthenticated GET /api/public/dogs/<public_token> returning strictly allow-listed fields with zero PII/medical/GPS).
-- **Next Step**: B9 (Dashboard stats, Audit log inspection, Excel export, Analytics export GET /api/analytics/export, and read-only Postgres BI role guidance)
+  - B9: Reporting & Analytics (GET /api/dashboard/stats for staff; Admin-only GET /api/audit-logs with filters, GET /api/export/excel 3-sheet .xlsx, GET /api/analytics/export flat CSV/JSON with PII excluded by default, and backend/scripts/readonly_analytics_user.sql).
+- **Next Step**: B10 (Hardening, index checks, backend/README.md, OpenAPI export, and final checklist)
 - **Known Issues**: None
