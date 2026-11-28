@@ -15,8 +15,18 @@ from app.extensions import db
 from app.models import Area, User
 
 
+_PLACEHOLDER_PASSWORDS = {
+    "change-me-admin-password",
+    "change-me-volunteer-password",
+}
+
+
 def _validate_credentials() -> tuple[str, str, str, str]:
     """Retrieve and validate seed credentials from environment variables."""
+    env_name = os.getenv("FLASK_ENV", "development").strip().lower()
+    if env_name == "production":
+        raise RuntimeError("Refusing to run seed.py in production environment.")
+
     admin_email = os.getenv("ADMIN_EMAIL", "").strip()
     admin_password = os.getenv("ADMIN_PASSWORD", "").strip()
     volunteer_email = os.getenv("VOLUNTEER_EMAIL", "").strip()
@@ -37,6 +47,15 @@ def _validate_credentials() -> tuple[str, str, str, str]:
             f"Missing required environment variables for seeding: {', '.join(missing)}. "
             "Please configure them in your .env file."
         )
+
+    for label, pw in [
+        ("ADMIN_PASSWORD", admin_password),
+        ("VOLUNTEER_PASSWORD", volunteer_password),
+    ]:
+        if "change-me" in pw.lower() or pw in _PLACEHOLDER_PASSWORDS:
+            raise RuntimeError(
+                f"Refusing to run seed.py with placeholder password in {label}."
+            )
 
     return admin_email, admin_password, volunteer_email, volunteer_password
 

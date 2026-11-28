@@ -5,10 +5,16 @@ from flask import current_app
 from flask_limiter.util import get_remote_address
 
 from app.extensions import limiter
-from app.schemas.auth import LoginInSchema, LoginOutSchema, UserMeOutSchema
-from app.services.auth_service import authenticate_user
+from app.schemas.auth import (
+    AuthMessageOutSchema,
+    ChangePasswordInSchema,
+    LoginInSchema,
+    LoginOutSchema,
+    UserMeOutSchema,
+)
+from app.services.auth_service import authenticate_user, change_password
 from app.utils.auth import get_current_user, login_required
-from app.utils.rate_limit import get_login_email_key
+from app.utils.rate_limit import get_login_email_key, get_user_or_ip_key
 
 auth_bp = APIBlueprint("auth", __name__, url_prefix="/api/auth", tag="Auth")
 
@@ -38,3 +44,25 @@ def login(json_data):
 def get_me():
     """Return profile details for the authenticated user."""
     return get_current_user()
+
+
+@auth_bp.post("/change-password")
+@limiter.limit(
+    lambda: current_app.config["RATELIMIT_CHANGE_PASSWORD"],
+    key_func=get_user_or_ip_key,
+)
+@auth_bp.input(ChangePasswordInSchema)
+@auth_bp.output(AuthMessageOutSchema, status_code=200)
+@auth_bp.doc(
+    summary="Change own password",
+    description="Verify current password, update password, and revoke existing JWTs.",
+    security="BearerAuth",
+)
+@login_required
+def change_own_password(json_data):
+    """Change password for the currently authenticated user."""
+    return change_password(
+        get_current_user(),
+        json_data["current_password"],
+        json_data["new_password"],
+    )

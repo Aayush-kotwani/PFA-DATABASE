@@ -211,3 +211,33 @@ def delete_dog(dog_id: int, actor: User) -> dict[str, str]:
         "Dog soft-deleted: actor_id=%s dog_id=%s", actor.id, dog.id
     )
     return {"message": "Dog deleted successfully"}
+
+
+def rotate_public_token(dog_id: int, actor: User) -> Dog:
+    """Regenerate a dog's public QR verification token (Admin only)."""
+    import logging
+    import secrets
+
+    dog = get_dog(dog_id)
+
+    try:
+        dog.public_token = secrets.token_urlsafe(32)
+        dog.updated_by = actor.id
+        log_audit(
+            action="update",
+            table_name="dogs",
+            record_id=dog.id,
+            user_id=actor.id,
+            changes={"public_token_rotated": True},
+        )
+        db.session.commit()
+        logging.getLogger(__name__).info(
+            "Dog public token rotated: actor_id=%s dog_id=%s",
+            actor.id,
+            dog.id,
+        )
+    except SQLAlchemyError:
+        db.session.rollback()
+        raise
+
+    return dog

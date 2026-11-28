@@ -153,8 +153,8 @@ pfa new db app/
 - [x] **SEC-08** *(Low)*: Escape `%` and `_` wildcards in SQL `ILIKE` search queries.
 - [x] **SEC-09** *(Medium)*: Image decompression-bomb protection (`Image.MAX_IMAGE_PIXELS` + `DecompressionBombError` -> 422) and per-dog active photo cap.
 - [x] **SEC-10** *(Medium)*: Structured security logging (failed logins, sensitive admin actions, request ID, no secrets/stack traces in 500 responses).
-- [ ] **SEC-11** *(Medium)*: `ENABLE_SWAGGER` toggle disabling `/docs` and `/openapi.json` when `FLASK_ENV=production` unless explicitly enabled.
-- [ ] **SEC-12** *(Low)*: Self-service password change (`POST /api/auth/change-password`) with rate limit, `token_version` bump, and audit log.
-- [ ] **SEC-13** *(Low)*: Admin-only public QR token rotation (`POST /api/dogs/{id}/rotate-token`) invalidating old QR links.
-- [ ] **SEC-14** *(Low)*: Exact dependency pinning in `requirements.txt` and `pip-audit` vulnerability verification.
-- [ ] **SEC-15** *(High)*: Remove hardcoded `debug=True` in `run.py` and block `scripts/seed.py` in production or with placeholder passwords.
+- [x] **SEC-11** *(Medium)*: `ENABLE_SWAGGER` toggle disabling `/docs` and `/openapi.json` when `FLASK_ENV=production` unless explicitly enabled.
+- [x] **SEC-12** *(Low)*: Self-service password change (`POST /api/auth/change-password`) with rate limit, `token_version` bump, and audit log.
+- [x] **SEC-13** *(Low)*: Admin-only public QR token rotation (`POST /api/dogs/{id}/rotate-token`) invalidating old QR links.
+- [x] **SEC-14** *(Low)*: Exact dependency pinning in `requirements.txt` and `pip-audit` vulnerability verification.
+- [x] **SEC-15** *(High)*: Remove hardcoded `debug=True` in `run.py` and block `scripts/seed.py` in production or with placeholder passwords.

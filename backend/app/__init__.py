@@ -24,14 +24,24 @@ from app.utils.logging import configure_logging
 from app.utils.security_headers import register_security_headers
 
 
+def _is_swagger_enabled(config_class: type[Config]) -> bool:
+    """Disable Swagger UI and OpenAPI spec in production unless explicitly enabled."""
+    env_name = os.getenv("FLASK_ENV", getattr(config_class, "FLASK_ENV", "development")).strip().lower()
+    raw_toggle = os.getenv("ENABLE_SWAGGER", "").strip().lower()
+    if raw_toggle:
+        return raw_toggle == "true" if env_name == "production" else raw_toggle != "false"
+    return env_name != "production"
+
+
 def create_app(config_class: type[Config] = Config) -> APIFlask:
     """Create and configure the APIFlask application instance."""
+    swagger_enabled = _is_swagger_enabled(config_class)
     app = APIFlask(
         __name__,
         title="Dog Sterilization Management API",
         version="0.1.0",
-        docs_path="/docs",
-        spec_path="/openapi.json",
+        docs_path="/docs" if swagger_enabled else None,
+        spec_path="/openapi.json" if swagger_enabled else None,
     )
     app.config.from_object(config_class)
 

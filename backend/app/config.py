@@ -101,6 +101,14 @@ class Config:
     RATELIMIT_PHOTO_UPLOAD = os.getenv("RATELIMIT_PHOTO_UPLOAD", "10/minute").strip()
     RATELIMIT_EXPORT = os.getenv("RATELIMIT_EXPORT", "10/minute").strip()
     RATELIMIT_QR = os.getenv("RATELIMIT_QR", "30/minute").strip()
+    RATELIMIT_CHANGE_PASSWORD = os.getenv("RATELIMIT_CHANGE_PASSWORD", "5/minute").strip()
+    RATELIMIT_TOKEN_ROTATE = os.getenv("RATELIMIT_TOKEN_ROTATE", "20/minute").strip()
+
+    ENABLE_SWAGGER = (
+        os.getenv("ENABLE_SWAGGER", "").strip().lower() == "true"
+        if os.getenv("FLASK_ENV", "development").strip().lower() == "production"
+        else os.getenv("ENABLE_SWAGGER", "").strip().lower() != "false"
+    )
 
     STORAGE_BACKEND = os.getenv("STORAGE_BACKEND", "local")
     UPLOAD_DIR = os.getenv("UPLOAD_DIR", str(BASE_DIR / "uploads"))

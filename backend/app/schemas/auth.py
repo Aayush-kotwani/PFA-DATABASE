@@ -2,6 +2,7 @@
 
 from apiflask import Schema
 from apiflask.fields import Boolean, DateTime, Email, Integer, Nested, String
+from apiflask.validators import Length
 
 
 class LoginInSchema(Schema):
@@ -35,3 +36,20 @@ class LoginOutSchema(Schema):
     access_token = String(required=True, metadata={"description": "JWT bearer token"})
     token_type = String(required=True, dump_default="bearer", metadata={"example": "bearer"})
     user = Nested(UserMeOutSchema, required=True)
+
+
+class ChangePasswordInSchema(Schema):
+    """Schema for self-service password change."""
+
+    current_password = String(required=True, load_only=True)
+    new_password = String(
+        required=True,
+        load_only=True,
+        validate=Length(min=8, max=128),
+    )
+
+
+class AuthMessageOutSchema(Schema):
+    """Schema for simple auth action confirmation messages."""
+
+    message = String(required=True)
