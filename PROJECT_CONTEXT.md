@@ -169,4 +169,4 @@ pfa new db app/
 - [x] **D2**: Production environment readiness check script (`backend/scripts/check_prod_env.py`).
 - [x] **D3**: Interactive production first-admin creation script (`backend/scripts/create_admin.py`).
 - [x] **D4**: End-to-end smoke and security verification script (`backend/scripts/smoke_test.py`) with `--safe` read-only mode.
-- [ ] **D5**: Root deployment & operations guide (`DEPLOYMENT.md`).
+- [x] **D5**: Root deployment & operations guide (`DEPLOYMENT.md`).
