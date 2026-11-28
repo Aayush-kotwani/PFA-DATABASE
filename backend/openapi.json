@@ -1388,6 +1388,62 @@
         ]
       }
     },
+    "/api/auth/change-password": {
+      "post": {
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthMessageOutSchema"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            },
+            "description": "Validation error"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Authentication error"
+          }
+        },
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Change own password",
+        "description": "Verify current password, update password, and revoke existing JWTs.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordInSchema"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/dogs/{dog_id}/cases": {
       "get": {
         "parameters": [
@@ -1782,6 +1838,62 @@
         ],
         "summary": "Deactivate operational area (Admin only)",
         "description": "Set an area's is_active status to False.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/dogs/{dog_id}/rotate-token": {
+      "post": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dog_id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DogOutSchema1"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Authentication error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "tags": [
+          "Dogs"
+        ],
+        "summary": "Rotate dog public QR token (Admin only)",
+        "description": "Generate a new public_token and immediately invalidate the old QR link.",
         "security": [
           {
             "BearerAuth": []
@@ -4274,6 +4386,38 @@
             "example": true
           }
         },
+        "additionalProperties": false
+      },
+      "AuthMessageOutSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "additionalProperties": false
+      },
+      "ChangePasswordInSchema": {
+        "type": "object",
+        "properties": {
+          "current_password": {
+            "type": "string",
+            "writeOnly": true
+          },
+          "new_password": {
+            "type": "string",
+            "writeOnly": true,
+            "minLength": 8,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "current_password",
+          "new_password"
+        ],
         "additionalProperties": false
       },
       "CaseOutSchema": {
