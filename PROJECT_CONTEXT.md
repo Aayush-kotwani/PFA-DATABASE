@@ -166,7 +166,7 @@ pfa new db app/
 
 ### Deployment Checklist
 - [x] **D1**: Render Blueprint (`render.yaml`) and Gunicorn config (`backend/gunicorn.conf.py`) configured for 512 MB RAM and `memory://` rate limiting.
-- [ ] **D2**: Production environment readiness check script (`backend/scripts/check_prod_env.py`).
+- [x] **D2**: Production environment readiness check script (`backend/scripts/check_prod_env.py`).
 - [ ] **D3**: Interactive production first-admin creation script (`backend/scripts/create_admin.py`).
 - [ ] **D4**: End-to-end smoke and security verification script (`backend/scripts/smoke_test.py`) with `--safe` read-only mode.
 - [ ] **D5**: Root deployment & operations guide (`DEPLOYMENT.md`).
