@@ -1,23 +1,15 @@
 # Project Execution Status
 
-- **Current Step**: B10 (Completed - Backend API & Database 100% Complete!)
+- **Current Branch**: `security-hardening`
+- **Current Step**: SEC-11..SEC-15 (Completed & verified; awaiting PASS before committing)
 - **Steps Completed**:
-  - A1: Project folder structure, .gitignore, Git initialization, remote connection, PROJECT_CONTEXT.md, and STATUS.md.
-  - A2: Virtual environment, requirements.txt, APIFlask app factory, .env config (.env.example), CORS, run.py, and GET /api/health endpoint.
-  - A3: Neon PostgreSQL setup (pfa-dog-sterilization-db), SQLAlchemy wiring, and database connectivity verification.
-  - A4: SQLAlchemy database models (one file per table, mixins for timestamps and soft delete, analytics fields, indexes, exports in models/__init__.py).
-  - A5: Flask-Migrate setup, initial migration (434d1b76f9d9_initial_schema) generated and applied, all 7 tables and indexes verified in Neon database.
-  - A6: Idempotent database seed script (backend/scripts/seed.py) created and executed; verified 2 users (admin, volunteer) and 3 operational areas with unique colors.
-  - B1: Authentication (POST /api/auth/login returning JWT, GET /api/auth/me, password verification, centralized APIError/APIFlask error handling, login_required & roles_required decorators).
-  - B2: User Management (Admin only: GET /api/users with pagination, POST /api/users, PATCH /api/users/<id>, POST /api/users/<id>/reset-password, audit logging without passwords, volunteer 403 enforcement, self-lockout guard).
-  - B3: Areas CRUD (Staff GET list and read by ID, Admin POST create, PATCH update, POST deactivate; #RRGGBB hex validation, case-insensitive uniqueness checks on name, short_code, and color_hex, audit logging, short_code immutability guard).
-  - B4: Dogs CRUD (POST /api/dogs, GET /api/dogs with search/filters/pagination, GET /api/dogs/<id>, PATCH /api/dogs/<id>, DELETE /api/dogs/<id> admin-only soft delete; row-locked dog_code generation, maps_url, lat/lng validation, backend guardian_phone stripping, audit log phone redaction).
-  - B5: Cases CRUD (Nested under /api/dogs/<dog_id>/cases: list, create, get, update, admin-only soft delete; chronological date ordering validation, auto-advancing dog.status, auto-calculated recovery_days).
-  - B6: Vaccinations CRUD (Nested under /api/dogs/<dog_id>/vaccinations: list, create, get, update, admin-only soft delete; case_id link validation, date ordering validation, and GET /api/vaccinations/due?days=30 grouping overdue and upcoming).
-  - B7: Photos & Storage Abstraction (StorageBackend + LocalStorage, Pillow EXIF rotation fix + metadata strip + max 1200px resize + WebP conversion, /media/<key> dev route, /api/dogs/<dog_id>/photos CRUD with single primary photo enforcement).
-  - B7b: Cloudflare R2 Storage (Private bucket dog-sterilization-media-dev, R2Storage with boto3 s3v4 presigned URLs, STORAGE_BACKEND=r2 switch, live upload & privacy verification).
-  - B8: QR Code & Public Verification (Staff-only GET /api/dogs/<id>/qr.png encoding <PUBLIC_BASE_URL>/d/<public_token>, and unauthenticated GET /api/public/dogs/<public_token> returning strictly allow-listed fields with zero PII/medical/GPS).
-  - B9: Reporting & Analytics (GET /api/dashboard/stats for staff; Admin-only GET /api/audit-logs with filters, GET /api/export/excel 3-sheet .xlsx, GET /api/analytics/export flat CSV/JSON with PII excluded by default, and backend/scripts/readonly_analytics_user.sql).
-  - B10: Hardening & Documentation (Isolated SQLite TestingConfig, 33 passing pytest tests across auth/RBAC/privacy/public/CRUD, live Neon index verification, backend/README.md, and backend/openapi.json export).
-- **Next Step**: Frontend (Vue 3) or Production Deployment (Render + prod Neon DB + prod R2 bucket)
+  - Phase A (A1–A6) & Phase B (B1–B10) on `main`.
+  - S0: Security Checklist and permanent security rules added to `PROJECT_CONTEXT.md`.
+  - SEC-01..SEC-10: Committed (`af63274`) on `security-hardening`.
+  - SEC-11: `ENABLE_SWAGGER` toggle disabling `/docs` and `/openapi.json` in production by default.
+  - SEC-15: Removed hardcoded `debug=True` in `run.py` and guarded `scripts/seed.py` against production or placeholder passwords.
+  - SEC-12: Self-service `POST /api/auth/change-password` with rate limit, `token_version` revocation, and audit logging.
+  - SEC-13: Admin-only `POST /api/dogs/<id>/rotate-token` with rate limit and immediate old-token invalidation.
+  - SEC-14: Exact version pinning in `backend/requirements.txt` and `pip-audit` vulnerability verification.
+- **Next Step**: Merge `security-hardening` into `main` after final review, then proceed to Frontend (Phase C).
 - **Known Issues**: None

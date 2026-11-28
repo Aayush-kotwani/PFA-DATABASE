@@ -1,6 +1,6 @@
 """User model for authentication and role-based permissions."""
 
-from sqlalchemy import Boolean, Enum, Integer, String
+from sqlalchemy import Boolean, Enum, Integer, String, text
 from app.extensions import db
 from app.models.mixins import TimestampMixin
 
@@ -20,6 +20,7 @@ class User(db.Model, TimestampMixin):
         default="volunteer",
     )
     is_active = db.Column(Boolean, nullable=False, default=True)
+    token_version = db.Column(Integer, nullable=False, default=0, server_default=text("0"))
 
     def __repr__(self) -> str:
         return f"<User id={self.id} email='{self.email}' role='{self.role}'>"

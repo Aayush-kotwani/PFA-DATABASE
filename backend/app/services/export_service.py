@@ -12,17 +12,18 @@ from sqlalchemy.orm import joinedload
 from app.models.case import Case
 from app.models.dog import Dog
 from app.models.vaccination import Vaccination
+from app.utils.export_sanitize import sanitize_export_cell
 
 
 def _excel_val(val: Any) -> Any:
-    """Normalize dates, datetimes, and Decimals for clean openpyxl cell values."""
+    """Normalize dates, datetimes, and Decimals, and neutralize formula injection."""
     if isinstance(val, datetime):
         return val.isoformat(sep=" ", timespec="seconds")
     if isinstance(val, date):
         return val.isoformat()
     if isinstance(val, Decimal):
         return float(val)
-    return val
+    return sanitize_export_cell(val)
 
 
 def _populate_sheet(ws, headers: list[str], rows: list[list[Any]]) -> None:
@@ -126,4 +127,5 @@ def build_excel_export() -> bytes:
 
     buf = BytesIO()
     wb.save(buf)
-    return buf.getvalue()
+    total_rows = len(dogs) + len(cases) + len(vaccinations)
+    return buf.getvalue(), total_rows

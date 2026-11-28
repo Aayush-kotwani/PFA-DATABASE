@@ -1,8 +1,12 @@
 """Standardized API exception classes and error handlers."""
 
+import logging
 from typing import Any
 from apiflask import HTTPError
 from flask import jsonify, Response
+from werkzeug.exceptions import HTTPException
+
+logger = logging.getLogger(__name__)
 
 
 class APIError(Exception):
@@ -58,6 +62,7 @@ def register_error_handlers(app) -> None:
             409: "CONFLICT",
             413: "FILE_TOO_LARGE",
             422: "VALIDATION_ERROR",
+            429: "RATE_LIMIT_EXCEEDED",
             500: "INTERNAL_SERVER_ERROR",
         }
         code = code_map.get(error.status_code, "HTTP_ERROR")
@@ -83,6 +88,32 @@ def register_error_handlers(app) -> None:
     def handle_413(error):
         """Format oversized request payload errors (exceeding MAX_CONTENT_LENGTH)."""
         return error_response(413, "FILE_TOO_LARGE", "Image exceeds 10 MB limit")
+
+    @app.errorhandler(429)
+    def handle_429(error):
+        """Format rate-limit exceeded errors while preserving Retry-After header."""
+        resp, status = error_response(
+            429,
+            "RATE_LIMIT_EXCEEDED",
+            "Too many requests. Please try again later.",
+        )
+        if hasattr(error, "get_headers"):
+            for header_name, header_val in error.get_headers():
+                if header_name.lower() == "retry-after":
+                    resp.headers[header_name] = header_val
+        return resp, status
+
+    @app.errorhandler(Exception)
+    def handle_unexpected_exception(error: Exception):
+        """Log unexpected exceptions with traceback and return safe generic JSON."""
+        if isinstance(error, HTTPException):
+            return error_response(
+                error.code or 500,
+                "HTTP_ERROR",
+                error.description or "HTTP error",
+            )
+        logger.exception("Unhandled exception: %s", error)
+        return error_response(500, "INTERNAL_ERROR", "An unexpected error occurred")
 
     @app.errorhandler(500)
     def handle_500(error):

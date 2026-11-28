@@ -1,8 +1,9 @@
 """Dogs management API routes."""
 
 from apiflask import APIBlueprint
-from flask import Response
+from flask import Response, current_app
 
+from app.extensions import limiter
 from app.schemas.dog import (
     DogCreateInSchema,
     DogListOutSchema,
@@ -13,6 +14,7 @@ from app.schemas.dog import (
 )
 from app.services import dog_service, public_service
 from app.utils.auth import get_current_user, login_required, roles_required
+from app.utils.rate_limit import get_user_or_ip_key
 
 dogs_bp = APIBlueprint("dogs", __name__, url_prefix="/api/dogs", tag="Dogs")
 
@@ -90,6 +92,7 @@ def delete_dog(dog_id):
 
 
 @dogs_bp.get("/<int:dog_id>/qr.png")
+@limiter.limit(lambda: current_app.config["RATELIMIT_QR"], key_func=get_user_or_ip_key)
 @dogs_bp.doc(
     summary="Download dog QR code PNG",
     description="Generate a QR code PNG encoding the public dog verification URL.",
@@ -111,3 +114,22 @@ def get_dog_qr_png(dog_id):
         mimetype="image/png",
         headers={"Content-Disposition": f'inline; filename="{dog_code}.png"'},
     )
+
+
+@dogs_bp.post("/<int:dog_id>/rotate-token")
+@limiter.limit(
+    lambda: current_app.config["RATELIMIT_TOKEN_ROTATE"],
+    key_func=get_user_or_ip_key,
+)
+@dogs_bp.output(DogOutSchema, status_code=200)
+@dogs_bp.doc(
+    summary="Rotate dog public QR token (Admin only)",
+    description="Generate a new public_token and immediately invalidate the old QR link.",
+    security="BearerAuth",
+)
+@login_required
+@roles_required("admin")
+def rotate_dog_public_token(dog_id):
+    """Rotate public_token for a dog."""
+    current_user = get_current_user()
+    return dog_service.rotate_public_token(dog_id, actor=current_user)

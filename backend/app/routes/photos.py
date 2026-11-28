@@ -3,6 +3,7 @@
 from apiflask import APIBlueprint
 from flask import current_app, send_from_directory
 
+from app.extensions import limiter
 from app.schemas.photo import (
     PhotoListOutSchema,
     PhotoMessageOutSchema,
@@ -14,6 +15,7 @@ from app.services import photo_service
 from app.services.storage import resolve_upload_dir
 from app.utils.auth import get_current_user, login_required, roles_required
 from app.utils.errors import APIError
+from app.utils.rate_limit import get_user_or_ip_key
 
 photos_bp = APIBlueprint(
     "photos",
@@ -39,6 +41,7 @@ def list_photos(dog_id):
 
 
 @photos_bp.post("", strict_slashes=False)
+@limiter.limit(lambda: current_app.config["RATELIMIT_PHOTO_UPLOAD"], key_func=get_user_or_ip_key)
 @photos_bp.input(PhotoUploadInSchema, location="files")
 @photos_bp.output(PhotoOutSchema, status_code=201)
 @photos_bp.doc(
