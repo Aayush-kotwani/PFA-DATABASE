@@ -1,10 +1,9 @@
 # Project Execution Status
 
-- **Current Branch**: `security-hardening`
-- **Current Step**: Final Backend Review & Documentation Update (Completed; awaiting final PASS)
+- **Current Branch**: `deploy-render`
+- **Current Step**: D1 - Render & Gunicorn Config (Completed; awaiting PASS before committing)
 - **Steps Completed**:
-  - Phase A (A1–A6) & Phase B (B1–B10) on `main`.
-  - Security Hardening (`SEC-01`–`SEC-15`) committed (`af63274`, `ead431a`) and pushed to `origin/security-hardening`.
-  - Final Review: Verified clean code (zero TODOs/placeholders), synced `backend/openapi.json` (27 paths), rewrote `backend/README.md` with full architecture and end-to-end flows, and confirmed 100% `pytest` pass.
-- **Next Step**: Commit final review/docs, merge `security-hardening` into `main`, and proceed to Frontend (Phase C).
+  - Phase A (A1–A6), Phase B (B1–B10), and Security Hardening (`SEC-01`–`SEC-15`) merged into `main` (`7e4f4c6`).
+  - D1: Created `render.yaml` (Singapore, Python `3.11.9`, non-secret defaults, `sync: false` secrets) and `backend/gunicorn.conf.py` (`workers=1`, `gthread`, `threads=4`, `timeout=60`, safe access logs).
+- **Next Step**: D2 (`backend/scripts/check_prod_env.py`) after D1 PASS.
 - **Known Issues**: None

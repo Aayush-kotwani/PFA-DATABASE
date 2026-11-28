@@ -158,3 +158,15 @@ pfa new db app/
 - [x] **SEC-13** *(Low)*: Admin-only public QR token rotation (`POST /api/dogs/{id}/rotate-token`) invalidating old QR links.
 - [x] **SEC-14** *(Low)*: Exact dependency pinning in `requirements.txt` and `pip-audit` vulnerability verification.
 - [x] **SEC-15** *(High)*: Remove hardcoded `debug=True` in `run.py` and block `scripts/seed.py` in production or with placeholder passwords.
+
+---
+
+## 9. Deployment (Render + Neon + Cloudflare R2)
+- Production runs on Render (`singapore` region) with `gunicorn -c gunicorn.conf.py run:app` (`workers=1`, `gthread`, `threads=4`, `timeout=60`), Neon PostgreSQL (`sslmode=require`), and Cloudflare R2 (`STORAGE_BACKEND=r2`) with zero persistent local filesystem usage.
+
+### Deployment Checklist
+- [x] **D1**: Render Blueprint (`render.yaml`) and Gunicorn config (`backend/gunicorn.conf.py`) configured for 512 MB RAM and `memory://` rate limiting.
+- [ ] **D2**: Production environment readiness check script (`backend/scripts/check_prod_env.py`).
+- [ ] **D3**: Interactive production first-admin creation script (`backend/scripts/create_admin.py`).
+- [ ] **D4**: End-to-end smoke and security verification script (`backend/scripts/smoke_test.py`) with `--safe` read-only mode.
+- [ ] **D5**: Root deployment & operations guide (`DEPLOYMENT.md`).
